@@ -30,7 +30,9 @@ QT\_INC = The path to the 'include' directory of the Qt install.
 QT\_LIB = The path to the 'lib' directory of the Qt install.
 
 Assuming all these variables are set and proper installs present, simply type:
+	
 	> make 
+
 in the topmost directory of the qtEpics Slider project.
 
 ## Running the application
@@ -38,10 +40,12 @@ in the topmost directory of the qtEpics Slider project.
 To run the application navigate to the 'bin' directory after building.
 
 To start the server, type:
-	./server
+
+	> ./server
 
 To start the client, type:
-	./client
+	
+	> ./client
 
 Note that server must be running for the client to operate. 
 
