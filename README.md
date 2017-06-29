@@ -7,6 +7,17 @@ This application also demonstrates how to interperate an EPICS Display structure
 This allows a client to know the context in which a piece of data should be 
 displayed (i.e. ranges, format, units, etc.).
 
+The server binary instantiates an EPICS v4 database that hosts a single EPICS v4
+record, 'testRecord'. This record has two fields, an integer field named 'value',
+and a Display field named 'display'. The Display structure holds data relevant
+to how the 'value' field should be display, specifically minimum and maximum values
+of a range.
+
+The client binary, using a Qt QApplication, opens a window that holds a slider widget
+and a progress bar widget. The slider widget controls the value of the 'value' field
+held on the database record. The value is then displayed in the progress bar widget.
+The ranges of both widgets are derived from the Display structure held on the record.
+
 ## Building
 
 To build the application an installion of EPICS v3 and v4 must be present. This 
