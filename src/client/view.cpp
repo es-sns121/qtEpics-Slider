@@ -40,7 +40,7 @@ Window::Window(QWidget * Parent)
 	setWindowTitle(tr("qtEpics slider client"));
 }
 
-/* Calls the model's putValue() method. This writes new a value to the record held
+/* Calls the model's putValue() method. This writes a new value to the record held
  * on the server.
  * */
 void Window::updateValue(const int & value) {
