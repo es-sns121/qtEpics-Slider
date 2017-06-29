@@ -15,7 +15,7 @@ class Window : public QWidget
 		explicit Window(QWidget * Parent = 0);
 	
 	private slots:
-	/* Updates the value on the record. */
+	/* Updates the value on the record through the model. */
 		void updateValue(const int & value);
 
 	private:

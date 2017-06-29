@@ -10,6 +10,7 @@ Model::Model (const string & channelName)
 	initDisplay();
 }
 
+/* initializes the pva objects */
 void Model::initPva(const string & channelName)
 {
 	pva = PvaClient::get();
@@ -20,6 +21,7 @@ void Model::initPva(const string & channelName)
 	getData = get->getData();
 }
 
+/* initializes the display structure pointer. */
 void Model::initDisplay()
 {
 	get->get();
@@ -27,23 +29,27 @@ void Model::initDisplay()
 		
 }
 
+/* Gets current value from record. */
 int Model::getValue()
 {
 	get->get();
 	return getData->getPVStructure()->getSubField<PVInt>("value")->get();
 }
 
+/* Writes new value to record */
 void Model::putValue(const int & value)
 {
 	putData->getPVStructure()->getSubField<PVInt>("value")->put(value);
 	put->put();
 }
 
+/* Gets the minimum range value from the display structure */
 double Model::getRangeMin()
 {
 	return display->getSubField<PVDouble>("limitLow")->get();
 }
 
+/* Gets the maximum range value from the display structure */
 double Model::getRangeMax()
 {
 	return display->getSubField<PVDouble>("limitHigh")->get();

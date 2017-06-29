@@ -47,4 +47,7 @@ $(MOC)/moc_output.cpp: view.h
 .PHONY: clean
 clean:
 	@printf "Cleaning client binaries, objects, and moc output...\n"
+	@mkdir -p $(TOP)/bin
+	@mkdir -p $(TOP)/obj
+	@mkdir -p $(TOP)/moc
 	rm -f $(BIN)/$(EXE) $(OBJS) $(MOC)/*  
