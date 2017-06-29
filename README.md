@@ -10,7 +10,7 @@ displayed (i.e. ranges, format, units, etc.).
 The server binary instantiates an EPICS v4 database that hosts a single EPICS v4
 record, 'testRecord'. This record has two fields, an integer field named 'value',
 and a Display field named 'display'. The Display structure holds data relevant
-to how the 'value' field should be display, specifically minimum and maximum values
+to how the 'value' field should be displayed, specifically minimum and maximum values
 of a range.
 
 The client binary, using a Qt QApplication, opens a window that holds a slider widget
