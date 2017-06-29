@@ -15,6 +15,10 @@ application was implemented using EPICS version 3.16 and version 4.5.0.
 The appilcation also requires an installation of Qt. The application was implemeted 
 using Qt version 4.8.1.
 
+The build system requires a g++ compiler and the Qt moc (meta object compiler) to be
+reachable from the $PATH enviornment variable. g++ compiler version 4.4.7 was used
+to build this application.
+
 The build system expects certain enviornment variables to be set:
 
 HOST\_OS = The host system OS. An example would be 'Linux'.
