@@ -18,9 +18,11 @@ DEP = pv/record.h $(SRC)
 all: server
 
 server : $(DEP)
+	@mkdir -p $(TOP)/bin
 	g++ $(CPP_FLAGS) $(EPICS_INCLUDE) $(EPICS_LIBRARY) $(SRC) -o $(EXE)
 
 .PHONY: clean
 clean:
 	@printf "Cleaning server binary...\n"
+	@mkdir -p $(TOP)/bin
 	rm -f $(BIN)/$(EXE)

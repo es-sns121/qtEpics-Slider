@@ -5,12 +5,9 @@ all: server client
 
 TOP = .
 
-BIN = $(TOP)/bin
 SRC = $(TOP)/src
 clientSRC = $(SRC)/client
 serverSRC = $(SRC)/server
-OBJ = $(TOP)/obj
-MOC = $(TOP)/moc
 
 # ======================================== Rules =============================================
 
@@ -27,4 +24,6 @@ client:
 .PHONY: clean
 clean: 
 	@printf "Cleaning binaries, objects, and moc output...\n"
-	rm -f $(BIN)/* $(OBJ)/* $(MOC)/* 
+	$(MAKE) -C $(clientSRC) clean
+	$(MAKE) -C $(serverSRC) clean
+
