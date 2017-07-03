@@ -24,6 +24,7 @@ class Window : public QWidget
 		void updateViewValue(const int & value);	
 	
 	signals: 
+	/* Emitted when the value in the model is changed by the model's monitor. */
 		void valueChanged(const int & value);
 	
 	private:

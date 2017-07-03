@@ -29,7 +29,6 @@ void Model::initDisplay()
 {
 	get->get();
 	display = getData->getPVStructure()->getSubField<PVStructure>("display");
-		
 }
 
 /* Gets current value from record. */
@@ -73,10 +72,12 @@ void Model::run()
 {
 	PvaClientMonitorDataPtr monitorData = monitor->getData();
 	PVStructurePtr pvStructure;
-	
+
+/* Initialize the monitors pvStructure */
 	monitor->waitEvent();
 	monitor->releaseEvent();
-	
+
+/* Monitor change in the record data. Use view callback upon change in data */
 	while (true) {
 		monitor->waitEvent();
 		
