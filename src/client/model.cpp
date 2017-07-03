@@ -4,10 +4,12 @@ using namespace std;
 using namespace epics::pvData;
 using namespace epics::pvaClient;
 
-Model::Model (const string & channelName)
+Model::Model (void * _view, const string & channelName)
 {
+	view = _view; 
 	initPva(channelName);
 	initDisplay();
+	initThread();
 }
 
 /* initializes the pva objects */
@@ -19,6 +21,7 @@ void Model::initPva(const string & channelName)
 	putData = put->getData();
 	get = channel->createGet("");
 	getData = get->getData();
+	monitor = channel->monitor("");
 }
 
 /* initializes the display structure pointer. */
@@ -53,4 +56,35 @@ double Model::getRangeMin()
 double Model::getRangeMax()
 {
 	return display->getSubField<PVDouble>("limitHigh")->get();
+}
+
+void Model::setCallback(void (*_callbackFunc)(void *, const int &))
+{
+	callbackFunc = _callbackFunc;
+}
+
+void Model::initThread()
+{
+	monitorThread = new epicsThread(*this, "monitorThread", epicsThreadGetStackSize(epicsThreadStackSmall), (unsigned int) 50);
+	monitorThread->start();
+}
+
+void Model::run()
+{
+	PvaClientMonitorDataPtr monitorData = monitor->getData();
+	PVStructurePtr pvStructure;
+	
+	monitor->waitEvent();
+	monitor->releaseEvent();
+	
+	while (true) {
+		monitor->waitEvent();
+		
+		pvStructure = monitorData->getPVStructure();
+		int value = pvStructure->getSubField<PVInt>("value")->get();
+		
+		monitor->releaseEvent();
+		
+		callbackFunc(view, value);
+	}
 }

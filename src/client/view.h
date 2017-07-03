@@ -14,10 +14,18 @@ class Window : public QWidget
 	public: 
 		explicit Window(QWidget * Parent = 0);
 	
+		static void WrapperToCallback(void * ptrToObj, const int & value);
+		void callback(const int & value);
+
 	private slots:
 	/* Updates the value on the record through the model. */
-		void updateValue(const int & value);
-
+		void updateModelValue(const int & value);
+	/* Updates the value in the view */
+		void updateViewValue(const int & value);	
+	
+	signals: 
+		void valueChanged(const int & value);
+	
 	private:
 	
 		QProgressBar * progress_bar;
