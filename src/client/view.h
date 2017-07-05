@@ -1,3 +1,8 @@
+
+// view.h
+
+// Defines window class for client
+
 #ifndef VIEW_H
 #define VIEW_H
 
@@ -18,13 +23,13 @@ class Window : public QWidget
 		void callback(const int & value);
 
 	private slots:
-	/* Updates the value on the record through the model. */
+	// Updates the value on the record through the model.
 		void updateModelValue(const int & value);
-	/* Updates the value in the view */
+	// Updates the value in the view
 		void updateViewValue(const int & value);	
 	
 	signals: 
-	/* Emitted when the value in the model is changed by the model's monitor. */
+	// Emitted when the value in the model is changed by the model's monitor.
 		void valueChanged(const int & value);
 	
 	private:
@@ -35,4 +40,4 @@ class Window : public QWidget
 		Model * model;		
 };
 
-#endif /* VIEW_H */
+#endif // VIEW_H

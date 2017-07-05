@@ -1,3 +1,8 @@
+
+// view.cpp
+
+// Source file that implements member functions defined in 'view.h'
+
 #include "view.h"
 
 #include <iostream>
