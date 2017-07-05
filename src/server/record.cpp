@@ -26,10 +26,10 @@ using namespace epics::pvAccess;
 using namespace epics::pvData;
 using namespace epics::pvDatabase;
 
-/* Defined in src/server/pv/record.h */
+// Defined in src/server/pv/record.h
 using namespace Project; 
 
-/* Creates a record */
+// Creates a record
 RecordPtr Record::createRecord(const string & recordName)
 {
 	static FieldCreatePtr     fieldCreate = getFieldCreate();
@@ -51,11 +51,11 @@ RecordPtr Record::createRecord(const string & recordName)
 
 }
 
-/* Creates and adds records to database. */
+// Creates and adds records to database.
 PVDatabasePtr Database::create()
 {
 
-/* Get the database hosted by the local provider. */
+// Get the database hosted by the local provider.
 	PVDatabasePtr master = PVDatabase::getMaster();
 	
 	string recordName("testRecord");
@@ -76,16 +76,15 @@ Record::Record(const string & recordName,
 
 void Record::initPvt()
 {
-	
 	initPVRecord();
 
 	PVStructurePtr pvStructure = getPVStructure();
-	PVFieldPtr field = pvStructure->getSubField("display");
 	
-/* Initialize the convenience pointers in the record class */
+// Initialize the convenience pointers in the record class
 	value = pvStructure->getSubField<PVInt>("value");
 
-/* Attach the display and initialize it */
+// Attach the display and initialize it
+	PVFieldPtr field = pvStructure->getSubField("display");
 	pvDisplay.attach(field);
 	display.setLow(0.0);
 	display.setHigh(100.0);
@@ -95,5 +94,4 @@ void Record::initPvt()
 
 void Record::process()
 {
-	/* ? */
 }
