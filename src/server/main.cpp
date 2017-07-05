@@ -1,13 +1,9 @@
-/*	
- *	============================================================
- *	
- *	Author: Evan Smith
- *	Date  : 6/28/2017
- * 	
- * 	server/main.cpp
- *
- *	============================================================
- */
+// 	server/main.cpp
+
+// Main entry point for server application. 
+
+// Instantiates and populates EPICS v4 database. Starts pvAccess
+// access server to allow connection to records hosted on database
 
 #include <iostream>
 #include <string>

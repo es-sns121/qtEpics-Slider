@@ -1,14 +1,6 @@
-/*
- * =============================================================
- * 	Author: Evan Smith
- * 	Date  : 6/28/2017
- *
- * 	server/record.cpp
- *
- *	Source file that implements the creation of the database.
- *
- * =============================================================
- */
+// 	server/record.cpp
+
+//	Source file that implements the creation of the database.
 
 #define epicsExportSharedSymbols
 #include "pv/record.h"
