@@ -1,3 +1,9 @@
+
+// record.h
+
+// header file that defines the database and record class
+// for the server application
+
 #ifndef RECORD_H
 #define RECORD_H
 
@@ -18,14 +24,14 @@
 
 namespace Project {
 
-
 	class epicsShareClass Database
 	{
 		public:
+			
+			// Creates an instance of a database
 			static epics::pvDatabase::PVDatabasePtr create();
 	
-	}; /* class Database */
-
+	}; // class Database
 
 	class Record;
 	typedef std::tr1::shared_ptr<Record> RecordPtr;
@@ -36,6 +42,7 @@ namespace Project {
 		public:
 			POINTER_DEFINITIONS(Record);
 			
+			// Creates an instance of a record		
 			static RecordPtr createRecord(const std::string & recordName);
 			
 			virtual ~Record() {}
@@ -54,9 +61,8 @@ namespace Project {
 			epics::pvData::Display   display;
 			epics::pvData::PVDisplay pvDisplay;
 
-	}; /* class Record */
+	}; // class Record
 
+} // namespace Project
 
-} /* namespace Project*/
-
-#endif /* RECORD_H */
+#endif // RECORD_H

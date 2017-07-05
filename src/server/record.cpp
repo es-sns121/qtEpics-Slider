@@ -1,6 +1,6 @@
-// 	server/record.cpp
+// server/record.cpp
 
-//	Source file that implements the creation of the database.
+// Source file that implements the creation of the database.
 
 #define epicsExportSharedSymbols
 #include "pv/record.h"
