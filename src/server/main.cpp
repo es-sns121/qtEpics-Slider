@@ -24,7 +24,7 @@ using namespace epics::pvData;
 using namespace epics::pvAccess;
 using namespace epics::pvDatabase;
 
-/* Defined in src/server/pv/record.h */
+//Defined in src/server/pv/record.h
 using namespace Project; 
 
 int main (int argc, char **argv)
@@ -37,18 +37,18 @@ int main (int argc, char **argv)
 		string arg(argv[1]);	
 		
 		if (arg == string("-v")) {
-		/* Verbose flag */
+		// Verbose flag
 			verbosity = true;
 		
 		} else if (arg == string("-h")) {
-		/* Help flag */	
+		// Help flag	
 			cout << "Help -- executable flags -- only one accepted at a time" << endl
 				 << "\t -v (verbose. prints database record names.)\n"
 				 << "\t -h (help. prints help information)\n";
 		
 			return 0;
 		} else {
-		/* Error */
+		// Error
 			cout << "unrecognized flag: \"" << arg << "\" (use -h for help)." << endl;
 			return 0;
 		
