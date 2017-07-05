@@ -18,16 +18,19 @@ class Model : public epicsThreadRunable
 		
 		Model(void * _view, const std::string & channelName);
 	
-	// Accessor functions to the display structure
+		// Accessor functions to the display structure
 		double getRangeMax();
 		double getRangeMin();
 	
-	// Writes new value to the record.
+		// Writes new value to the record.
 		void putValue(const int & value);
 	
-	// Gets current value from the record.
+		// Gets current value from the record.
 		int getValue();
-
+		
+		// Gets current text from the record.
+		std::string getText();
+		
 		void setCallback(void (*_callbackFunc)(void *, const int &));
 
 	private:

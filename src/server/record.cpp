@@ -30,6 +30,7 @@ RecordPtr Record::createRecord(const string & recordName)
 
 	StructureConstPtr top = fieldCreate->createFieldBuilder()->
 		add("value", pvInt)->
+		add("text", pvString)->
 		add("display", standardField->display())->
 		createStructure();
 
@@ -71,12 +72,9 @@ void Record::initPvt()
 	initPVRecord();
 
 	PVStructurePtr pvStructure = getPVStructure();
-	
-// Initialize the convenience pointers in the record class
-	value = pvStructure->getSubField<PVInt>("value");
+	PVFieldPtr field = pvStructure->getSubField("display");
 
 // Attach the display and initialize it
-	PVFieldPtr field = pvStructure->getSubField("display");
 	pvDisplay.attach(field);
 	display.setLow(0.0);
 	display.setHigh(100.0);

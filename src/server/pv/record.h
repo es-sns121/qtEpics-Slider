@@ -55,8 +55,6 @@ namespace Project {
 				epics::pvData::PVStructurePtr const & pvStructure);
 			
 			void initPvt();
-
-			epics::pvData::PVIntPtr value;
 			
 			epics::pvData::Display   display;
 			epics::pvData::PVDisplay pvDisplay;

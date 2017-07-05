@@ -4,8 +4,7 @@
 // source file that implements member functions defined in 
 // 'model.h'
 
-
-include "model.h"
+#include "model.h"
 
 using namespace std;
 using namespace epics::pvData;
@@ -38,11 +37,18 @@ void Model::initDisplay()
 	display = getData->getPVStructure()->getSubField<PVStructure>("display");
 }
 
-// Gets current value from record.
+// Gets the current value from the record.
 int Model::getValue()
 {
 	get->get();
 	return getData->getPVStructure()->getSubField<PVInt>("value")->get();
+}
+
+// Gets the current text from the record.
+string Model::getText()
+{
+	get->get();
+	return getData->getPVStructure()->getSubField<PVString>("text")->get();
 }
 
 // Writes new value to record
@@ -73,7 +79,7 @@ void Model::setCallback(void (*_callbackFunc)(void *, const int &))
 // Allocates, initializes, and starts a thread for the monitor to run in
 void Model::initThread()
 {
-	monitorThread = new epicsThread(*this, "monitorThread", epicsThreadGetStackSize(epicsThreadStackSmall), (unsigned int) 50);
+	monitorThread = new epicsThread(*this, "monitorThread", epicsThreadGetStackSize(epicsThreadStackSmall));
 	monitorThread->start();
 }
 
@@ -84,11 +90,11 @@ void Model::run()
 	PvaClientMonitorDataPtr monitorData = monitor->getData();
 	PVStructurePtr pvStructure;
 
-// Initialize the monitors pvStructure
+	// Initialize the monitors pvStructure
 	monitor->waitEvent();
 	monitor->releaseEvent();
 
-// Monitor change in the record data. Use view callback upon change in data
+	// Monitor change in the record data. Use view callback upon change in data
 	while (true) {
 		monitor->waitEvent();
 		

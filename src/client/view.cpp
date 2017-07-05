@@ -34,25 +34,30 @@ Window::Window(QWidget * Parent)
 	slider->setValue(value);
 	slider->setTracking(false);						// To prevent spamming the updateModelValue() call, we do not enable slider tracking
 													// This means that only the final position of the slider will emit a 'value changed'
-													// signal. The updateModelValue() involves a computationally expensive network exchange.
+													// signal.
 
 // Connect the slider widgets position to the progress bar widgets value.
 	QObject::connect(slider, SIGNAL (sliderMoved(int)), progress_bar, SLOT (setValue(int)));
 
 // Connect the slider widget's 'value changed' to the view's updateModelValue() function call.
-	Object::connect(slider, SIGNAL (valueChanged(int)), this , SLOT (updateModelValue(int)));
+	QObject::connect(slider, SIGNAL (valueChanged(int)), this , SLOT (updateModelValue(int)));
 
 // Connect the view's 'value changed' signal to the updateViewValue() function call.
 	QObject::connect(this, SIGNAL (valueChanged(int)), this, SLOT (updateViewValue(int)));
 
+	textBox = new QTextEdit(this);
+	textBox->setReadOnly(true);
+	textBox->setMinimumSize(150, 150);
+
 // Formatting main window
 
-	setMinimumSize(300, 150);
+	setMinimumSize(450, 200);
 	
 	QBoxLayout * mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
 	mainLayout->addWidget(progress_bar);
 	mainLayout->addWidget(slider);
+	mainLayout->addWidget(textBox);
 
 	setLayout(mainLayout);
 
@@ -75,13 +80,16 @@ void Window::WrapperToCallback(void * ptrToObj, const int & value)
 // Updates value of view when model is updated by its monitor
 void Window::updateViewValue(const int & value)
 {
+	// QString text;
+	
 	// Block signal emition. This prevents signal loops when 'setValue' is called
 	blockSignals(true);
 
 	// Update widget values based on the new value from the model
 	slider->setValue(value);
 	progress_bar->setValue(value);
-	
+	// textBox->setText(text);	
+
 	// Unblock signal emition
 	blockSignals(false);
 }
