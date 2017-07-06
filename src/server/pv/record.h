@@ -55,7 +55,8 @@ namespace Project {
 				epics::pvData::PVStructurePtr const & pvStructure);
 		
 			void initPvt();
-			
+			void initAlarmLimit();
+
 			epics::pvData::Display   display;
 			epics::pvData::PVDisplay pvDisplay;
 

@@ -10,10 +10,10 @@ include $(CONFIG)
 EXE = $(BIN)/server
 
 # Source files
-SRC = main.cpp record.cpp
+SRC = main.cpp record.cpp alarmLimit.cpp
 
 # Rule dependencies
-DEP = pv/record.h $(SRC)
+DEP = pv/record.h pv/alarmLimit.h $(SRC)
  
 all: server
 

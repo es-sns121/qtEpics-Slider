@@ -4,6 +4,7 @@
 
 #define epicsExportSharedSymbols
 #include "pv/record.h"
+#include "pv/alarmLimit.h"
 
 #include <iostream>
 #include <string>
@@ -25,13 +26,14 @@ using namespace Project;
 // Creates a record
 RecordPtr Record::createRecord(const string & recordName)
 {
-	static FieldCreatePtr     fieldCreate = getFieldCreate();
-	static StandardFieldPtr   standardField = getStandardField();
-	static PVDataCreatePtr    pvDataCreate = getPVDataCreate();
+	static FieldCreatePtr   fieldCreate   = getFieldCreate();
+	static StandardFieldPtr standardField = getStandardField();
+	static PVDataCreatePtr  pvDataCreate  = getPVDataCreate();
 
 	StructureConstPtr top = fieldCreate->createFieldBuilder()->
 		add("value", pvInt)->
 		add("display", standardField->display())->
+		add("alarmLimit", createAlarmLimitField())->
 		createStructure();
 
 	PVStructurePtr pvStructure = pvDataCreate->createPVStructure(top);
@@ -44,11 +46,11 @@ RecordPtr Record::createRecord(const string & recordName)
 
 }
 
-// Creates and adds records to database.
+// Creates and adds the testRecord to the database.
 PVDatabasePtr Database::create()
 {
 
-// Get the database hosted by the local provider.
+	// Get the database hosted by the local provider.
 	PVDatabasePtr master = PVDatabase::getMaster();
 	
 	string recordName("testRecord");
@@ -67,12 +69,15 @@ Record::Record(const string & recordName,
 {
 }
 
+// initialize the record
 void Record::initPvt()
 {
 	initPVRecord();
 
 	PVStructurePtr pvStructure = getPVStructure();
-	
+
+	pvStructure->getSubField<PVInt>("value")->put(50);
+
 	PVFieldPtr field = pvStructure->getSubField("display");
 
 	// Attach the display and initialize it
@@ -81,9 +86,28 @@ void Record::initPvt()
 	display.setHigh(100.0);
 	pvDisplay.set(display);
 
+	initAlarmLimit();
 }
 
-// Update the text of the record when the value changes
+// Initialize the alarm limit structure
+void Record::initAlarmLimit()
+{
+	PVStructurePtr pvStructure = getPVStructure();
+	pvStructure = pvStructure->getSubField<PVStructure>("alarmLimit");
+		
+	pvStructure->getSubField<PVBoolean>("active")->put(true);
+	pvStructure->getSubField<PVDouble>("lowAlarmLimit")->put(10);
+	pvStructure->getSubField<PVDouble>("lowWarningLimit")->put(20);
+	pvStructure->getSubField<PVDouble>("highWarningLimit")->put(80);
+	pvStructure->getSubField<PVDouble>("highAlarmLimit")->put(90);
+	pvStructure->getSubField<PVInt>("lowAlarmSeverity")->put(0);
+	pvStructure->getSubField<PVInt>("lowWarningSeverity")->put(0);
+	pvStructure->getSubField<PVInt>("highWarningSeverity")->put(0);
+	pvStructure->getSubField<PVInt>("highAlarmSeverity")->put(0);
+	pvStructure->getSubField<PVDouble>("hysteresis")->put(10);
+	
+}
+
 void Record::process()
 {
 }
