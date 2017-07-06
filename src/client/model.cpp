@@ -18,6 +18,7 @@ Model::Model (void * _view, const string & channelName)
 	initValue();
 	initText();
 	initDisplay();
+	initAlarmLimit();
 	initThread();
 }
 
@@ -56,6 +57,13 @@ void Model::initDisplay()
 	display = getData->getPVStructure()->getSubField<PVStructure>("display");
 }
 
+// initializes the display structure pointer.
+void Model::initAlarmLimit()
+{
+	get->get();
+	alarmLimit = getData->getPVStructure()->getSubField<PVStructure>("alarmLimit");
+}
+
 // Allocates, initializes, and starts a thread for the monitor to run in
 void Model::initThread()
 {
@@ -85,6 +93,30 @@ double Model::getRangeMin()
 double Model::getRangeMax()
 {
 	return display->getSubField<PVDouble>("limitHigh")->get();
+}
+
+// Gets the low alarm value from the alarm limit structure
+double Model::getLowAlarm()
+{
+	return alarmLimit->getSubField<PVDouble>("lowAlarmLimit")->get();
+}
+
+// Gets the low warning value from the alarm limit structure
+double Model::getLowWarning()
+{
+	return alarmLimit->getSubField<PVDouble>("lowWarningLimit")->get();
+}
+
+// Gets the high warning value from the alarm limit structure
+double Model::getHighWarning()
+{
+	return alarmLimit->getSubField<PVDouble>("highWarningLimit")->get();
+}
+
+// Gets the high alarm value from the alarm limit structure
+double Model::getHighAlarm() 
+{
+	return alarmLimit->getSubField<PVDouble>("highAlarmLimit")->get();
 }
 
 // Writes new value to record

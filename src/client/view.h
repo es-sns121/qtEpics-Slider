@@ -62,6 +62,9 @@ class Window : public QWidget
 		// Retrieve the textual representation of the record from the model.
 		QString getModelText();
 
+		// Updates the progress bar's color based on the alarmLimit data in the model. 
+		void updateProgressBarColor(const int & value);
+
 		QTextEdit * textBox;			// Text box for textual data
 		QProgressBar * progress_bar;	// Progress bar to show current value in its range
 		QSlider * slider;				// Slider to control current value in its range

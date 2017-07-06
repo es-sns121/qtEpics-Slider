@@ -47,12 +47,7 @@ void Window::initProgressBar(
 	// Get rid of the '%' in the progress bar's text.
 	progress_bar->setFormat("%p");
 
-/*
-	QGraphicsColorizeEffect * gEffect = new QGraphicsColorizeEffect;
-	gEffect->setColor(QColor(0, 0, 192));
-	progress_bar->setGraphicsEffect(gEffect);
-*/
-
+	updateProgressBarColor(value);
 }
 
 void Window::initSlider(
@@ -146,23 +141,54 @@ void Window::updateViewValue(const int & value)
 	// Update widget values based on the new value from the model
 	slider->setValue(value);
 	progress_bar->setValue(value);
+	updateProgressBarColor(value);
 	textBox->setText(text);	
 
 	// Unblock signal emition
 	blockSignals(false);
 }
 
+void Window::updateProgressBarColor(const int & value)
+{	
+	static double alarmLow    = model->getLowAlarm();
+	static double warningLow  = model->getLowWarning();
+	static double warningHigh = model->getHighWarning();
+	static double alarmHigh   = model->getHighAlarm();
+
+	static QGraphicsColorizeEffect * gEffect = new QGraphicsColorizeEffect;
+
+	if (value <= alarmLow || value >= alarmHigh) {
+		// set color to red
+		gEffect->setStrength(1.0);
+		gEffect->setColor(Qt::darkRed);
+		progress_bar->setGraphicsEffect(gEffect);
+	
+	} else if (value <= warningLow || value >= warningHigh) {
+		// set color to yellow
+		gEffect->setStrength(1.0);
+		gEffect->setColor(Qt::darkYellow);
+		progress_bar->setGraphicsEffect(gEffect);
+	
+	} else {
+
+		gEffect->setStrength(0.0);
+		progress_bar->setGraphicsEffect(gEffect);
+	
+	}
+}
+
+
 // Sets slider value tracking to current checkbox state.
 // Unchecked -> disabled
 // Checed	 -> enabled
 void Window::setSliderTracking(const int & state)
 {
-	if ( state == Qt::Unchecked ) {
+	if (state == Qt::Unchecked) {
 		
 		slider->setTracking(false);		
 		checkBox->setToolTip(tr("Slider value tracking is disabled."));
 	
-	} else if ( state == Qt::Checked ) {
+	} else if (state == Qt::Checked) {
 	
 		slider->setTracking(true);
 		checkBox->setToolTip(tr("Slider value tracking is enabled."));
