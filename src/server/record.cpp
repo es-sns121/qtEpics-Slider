@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 
 #include <pv/channelProviderLocal.h>
 #include <pv/serverContext.h>
@@ -30,7 +31,6 @@ RecordPtr Record::createRecord(const string & recordName)
 
 	StructureConstPtr top = fieldCreate->createFieldBuilder()->
 		add("value", pvInt)->
-		add("text", pvString)->
 		add("display", standardField->display())->
 		createStructure();
 
@@ -72,9 +72,10 @@ void Record::initPvt()
 	initPVRecord();
 
 	PVStructurePtr pvStructure = getPVStructure();
+	
 	PVFieldPtr field = pvStructure->getSubField("display");
 
-// Attach the display and initialize it
+	// Attach the display and initialize it
 	pvDisplay.attach(field);
 	display.setLow(0.0);
 	display.setHigh(100.0);
@@ -82,6 +83,7 @@ void Record::initPvt()
 
 }
 
+// Update the text of the record when the value changes
 void Record::process()
 {
 }

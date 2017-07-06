@@ -5,6 +5,7 @@
 // 'model.h'
 
 #include "model.h"
+#include <sstream>
 
 using namespace std;
 using namespace epics::pvData;
@@ -14,6 +15,8 @@ Model::Model (void * _view, const string & channelName)
 {
 	view = _view; 
 	initPva(channelName);
+	initValue();
+	initText();
 	initDisplay();
 	initThread();
 }
@@ -28,6 +31,22 @@ void Model::initPva(const string & channelName)
 	get = channel->createGet("");
 	getData = get->getData();
 	monitor = channel->monitor("");
+	
+	// Initialize the monitor's pvStructure
+	monitor->waitEvent();
+	monitor->releaseEvent();
+
+}
+
+void Model::initValue()
+{
+	get->get();
+	value = getData->getPVStructure()->getSubField<PVInt>("value")->get();
+}
+
+void Model::initText()
+{
+	text = dumpRecordToString(); 
 }
 
 // initializes the display structure pointer.
@@ -37,25 +56,23 @@ void Model::initDisplay()
 	display = getData->getPVStructure()->getSubField<PVStructure>("display");
 }
 
+// Allocates, initializes, and starts a thread for the monitor to run in
+void Model::initThread()
+{
+	monitorThread = new epicsThread(*this, "monitorThread", epicsThreadGetStackSize(epicsThreadStackSmall));
+	monitorThread->start();
+}
+
 // Gets the current value from the record.
 int Model::getValue()
 {
-	get->get();
-	return getData->getPVStructure()->getSubField<PVInt>("value")->get();
+	return value; 
 }
 
 // Gets the current text from the record.
 string Model::getText()
 {
-	get->get();
-	return getData->getPVStructure()->getSubField<PVString>("text")->get();
-}
-
-// Writes new value to record
-void Model::putValue(const int & value)
-{
-	putData->getPVStructure()->getSubField<PVInt>("value")->put(value);
-	put->put();
+	return text; 
 }
 
 // Gets the minimum range value from the display structure
@@ -70,36 +87,45 @@ double Model::getRangeMax()
 	return display->getSubField<PVDouble>("limitHigh")->get();
 }
 
+// Writes new value to record
+void Model::putValue(const int & value)
+{
+	putData->getPVStructure()->getSubField<PVInt>("value")->put(value);
+	put->put();
+}
+
+// Dumps the record's current contents to string
+string Model::dumpRecordToString()
+{
+	stringstream ss;
+
+	monitor->getData()->getPVStructure()->dumpValue(ss);
+
+	return ss.str();
+}
+
 // Set the callback function
 void Model::setCallback(void (*_callbackFunc)(void *, const int &))
 {
 	callbackFunc = _callbackFunc;
 }
 
-// Allocates, initializes, and starts a thread for the monitor to run in
-void Model::initThread()
-{
-	monitorThread = new epicsThread(*this, "monitorThread", epicsThreadGetStackSize(epicsThreadStackSmall));
-	monitorThread->start();
-}
-
-// Executed by the monitor thread. monitors the record on the database. Calls view callback function upon registering 
+// Executed by the monitor thread. Monitors the record on the database. Calls view's callback function upon registering 
 // a change in the data
 void Model::run()
 {
 	PvaClientMonitorDataPtr monitorData = monitor->getData();
 	PVStructurePtr pvStructure;
 
-	// Initialize the monitors pvStructure
-	monitor->waitEvent();
-	monitor->releaseEvent();
-
-	// Monitor change in the record data. Use view callback upon change in data
+	// Monitor change in the record data. Call view's callback upon change in data
 	while (true) {
 		monitor->waitEvent();
 		
 		pvStructure = monitorData->getPVStructure();
-		int value = pvStructure->getSubField<PVInt>("value")->get();
+		
+		// Update local copies
+		value = pvStructure->getSubField<PVInt>("value")->get();
+		text = dumpRecordToString(); 
 		
 		monitor->releaseEvent();
 		

@@ -32,42 +32,103 @@ Window::Window(QWidget * Parent)
 	slider->setOrientation(Qt::Horizontal);
 	slider->setRange(rangeLow, rangeHigh);
 	slider->setValue(value);
-	slider->setTracking(false);						// To prevent spamming the updateModelValue() call, we do not enable slider tracking
-													// This means that only the final position of the slider will emit a 'value changed'
-													// signal.
+	slider->setTracking(false);		// To prevent spamming the updateModelValue() call, we disable slider 
+									// tracking by default. This means that only the final position of the 
+									// slider will emit a 'value changed' signal.
 
-// Connect the slider widgets position to the progress bar widgets value.
-	QObject::connect(slider, SIGNAL (sliderMoved(int)), progress_bar, SLOT (setValue(int)));
-
-// Connect the slider widget's 'value changed' to the view's updateModelValue() function call.
-	QObject::connect(slider, SIGNAL (valueChanged(int)), this , SLOT (updateModelValue(int)));
-
-// Connect the view's 'value changed' signal to the updateViewValue() function call.
-	QObject::connect(this, SIGNAL (valueChanged(int)), this, SLOT (updateViewValue(int)));
+	checkBox = new QCheckBox("Slider Value Tracking", this);
 
 	textBox = new QTextEdit(this);
 	textBox->setReadOnly(true);
 	textBox->setMinimumSize(150, 150);
+	textBox->setText(getModelText());
 
-// Formatting main window
+	// Connect the slider widget's position to the progress bar widget's value.
+	QObject::connect(slider, SIGNAL (sliderMoved(int)), progress_bar, SLOT (setValue(int)));
+
+	// Connect the slider widget's 'value changed' to the view's updateModelValue() function call.
+	QObject::connect(slider, SIGNAL (valueChanged(int)), this , SLOT (updateModelValue(int)));
+
+	// Connect the view's 'value changed' signal to the updateViewValue() function call.
+	QObject::connect(this, SIGNAL (valueChanged(int)), this, SLOT (updateViewValue(int)));
+
+	// Connect the check box's stateChanged signal to the setSliderTracking() function call.
+	QObject::connect(checkBox, SIGNAL (stateChanged(int)), this, SLOT(setSliderTracking(int)));
+
+	// Formatting main window
 
 	setMinimumSize(450, 200);
 	
 	QBoxLayout * mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
 	mainLayout->addWidget(progress_bar);
+	mainLayout->addWidget(checkBox);
 	mainLayout->addWidget(slider);
 	mainLayout->addWidget(textBox);
-
+	
 	setLayout(mainLayout);
 
 	setWindowTitle(tr("qtEpics slider client"));
+}
+
+void Window::closeEvent(QCloseEvent * event)
+{
+	// TODO: How to shut down cleanly?
+	//	Need to stop monitor/channel somehow...
+	
+	event->accept();
+}
+
+QString Window::getModelText()
+{
+	std::string ret = model->getText();
+	return QString(ret.c_str());
 }
 
 // Calls the model's putValue() method. This writes a new value to the record held
 // on the server.
 void Window::updateModelValue(const int & value) {
 	model->putValue(value);
+}
+
+// Updates value of view when model is updated by its monitor
+void Window::updateViewValue(const int & value)
+{
+	QString text = getModelText();
+
+	// Block signal emition. This prevents signal loops when 'setValue' is called
+	blockSignals(true);
+
+	// Update widget values based on the new value from the model
+	slider->setValue(value);
+	progress_bar->setValue(value);
+	textBox->setText(text);	
+
+	// Unblock signal emition
+	blockSignals(false);
+}
+
+// Sets slider value tracking to current checkbox state.
+// Unchecked -> disabled
+// Checed	 -> enabled
+void Window::setSliderTracking(const int & state)
+{
+	if ( state == Qt::Unchecked ) {
+		
+		slider->setTracking(false);		
+	
+	} else if ( state == Qt::Checked ) {
+	
+		slider->setTracking(true);
+	
+	} else {
+		// error. checkbox tristate is somehow enabled.	
+		// TODO: 
+		//	what to do? Exception? Exit? 
+		//	Currently ignoring error and setting slider into safest tracking
+		//	setting .
+		slider->setTracking(false);		
+	}
 }
 
 // Static wrapper function to window's callback member function
@@ -77,26 +138,8 @@ void Window::WrapperToCallback(void * ptrToObj, const int & value)
 	window->callback(value);
 }
 
-// Updates value of view when model is updated by its monitor
-void Window::updateViewValue(const int & value)
-{
-	// QString text;
-	
-	// Block signal emition. This prevents signal loops when 'setValue' is called
-	blockSignals(true);
-
-	// Update widget values based on the new value from the model
-	slider->setValue(value);
-	progress_bar->setValue(value);
-	// textBox->setText(text);	
-
-	// Unblock signal emition
-	blockSignals(false);
-}
-
-// Emit valueChanged. This is used instead of calling 'setValue' on the widgets directly
-// becuase it would be called from a seperate thread. This allows the main event thread to 
-// handle repaints 
+// This is used instead of calling 'setValue' on the widgets directly becuase it would be 
+// called from a seperate thread. This allows the main event thread to handle repaints 
 void Window::callback(const int & value)
 {
 	emit valueChanged(value);

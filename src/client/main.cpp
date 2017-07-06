@@ -17,7 +17,7 @@ int main (int argc, char ** argv)
 {
 	QApplication app(argc, argv);
 
-// From "view.h"
+	// From "view.h"
 	Window window;
 
 	window.show();

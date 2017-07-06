@@ -32,29 +32,37 @@ class Model : public epicsThreadRunable
 		std::string getText();
 		
 		void setCallback(void (*_callbackFunc)(void *, const int &));
-
+		
 	private:
 
-	// Monitor thread. Monitor needs to be in another thread to prevent blocking 
-	// of GUI event loop
+		int value;			// Value held on record
+		std::string text;	// Textual representation of the record
+
+		// Dumps the record's current structure to a string representation
+		std::string dumpRecordToString();
+
+		// Monitor thread. Monitor needs to be in another thread to prevent blocking 
+		// of GUI event loop
 		epicsThread * monitorThread;
 	
-	// Code that the monitor thread will run
+		// Code that the monitor thread will run
 		void run();
-
-	// Pointer to view's callback function. Called when monitor detects change in 
-	// record data 
+		
+		// Pointer to view's callback function. Called when monitor detects change in 
+		// record data 
 		void (*callbackFunc)(void *, const int &);
 	
-	// Pointer to view object
+		// Pointer to view object
 		void * view;
 
-	// Private initialization functions called by the constructor
+		// Private initialization functions called by the constructor
 		void initPva(const std::string & channelName);
+		void initValue();
+		void initText();
 		void initDisplay();
 		void initThread();
 
-	// pvaClient objects that facilitate communication to record on database server
+		// pvaClient objects that facilitate communication to record on database server
 		epics::pvaClient::PvaClientPtr        pva;
 		epics::pvaClient::PvaClientChannelPtr channel;
 		epics::pvaClient::PvaClientPutPtr     put;
@@ -63,7 +71,7 @@ class Model : public epicsThreadRunable
 		epics::pvaClient::PvaClientGetDataPtr getData;
 		epics::pvaClient::PvaClientMonitorPtr monitor;
 
-	// Pointer to the display structure that is retrieved from the record.
+		// Pointer to the display structure that is retrieved from the record.
 		epics::pvData::PVStructurePtr display;
 		
 }; // class Model

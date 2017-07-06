@@ -53,7 +53,7 @@ namespace Project {
 			Record(
 				const std::string & recordName, 
 				epics::pvData::PVStructurePtr const & pvStructure);
-			
+		
 			void initPvt();
 			
 			epics::pvData::Display   display;
