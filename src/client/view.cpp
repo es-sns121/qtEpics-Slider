@@ -10,6 +10,7 @@ using std::cout;
 using std::endl;
 
 #include <QBoxLayout>
+#include <QGraphicsColorizeEffect>
 
 Window::Window(QWidget * Parent)
 {
@@ -22,12 +23,43 @@ Window::Window(QWidget * Parent)
 	int rangeHigh = (int) model->getRangeMax();
 	int value = model->getValue();
 
+	initProgressBar(rangeLow, rangeHigh, value);
+	
+	initSlider(rangeLow, rangeHigh, value);
+	
+	initCheckbox();
+	
+	initTextbox();
+	
+	connectWidgets();
+	
+	formatWindow();
+}
+
+void Window::initProgressBar(
+	const int & rangeLow,
+	const int & rangeHigh,
+	const int & value)
+{
 	progress_bar = new QProgressBar(this);
 	progress_bar->setRange(rangeLow, rangeHigh);
 	progress_bar->setValue(value);		
 	// Get rid of the '%' in the progress bar's text.
 	progress_bar->setFormat("%p");
 
+/*
+	QGraphicsColorizeEffect * gEffect = new QGraphicsColorizeEffect;
+	gEffect->setColor(QColor(0, 0, 192));
+	progress_bar->setGraphicsEffect(gEffect);
+*/
+
+}
+
+void Window::initSlider(
+	const int & rangeLow,
+	const int & rangeHigh,
+	const int & value)
+{
 	slider = new QSlider(this);
 	slider->setOrientation(Qt::Horizontal);
 	slider->setRange(rangeLow, rangeHigh);
@@ -35,16 +67,25 @@ Window::Window(QWidget * Parent)
 	slider->setTracking(false);		// To prevent spamming the updateModelValue() call, we disable slider 
 									// tracking by default. This means that only the final position of the 
 									// slider will emit a 'value changed' signal.
+}
 
+void Window::initCheckbox()
+{
 	// The checkbox allows enabling/disabling of the slider's value tracking mode.
 	checkBox = new QCheckBox("Slider Value Tracking", this);
 	checkBox->setToolTip(tr("Slider value tracking is disabled."));
+}
 
+void Window::initTextbox()
+{
 	textBox = new QTextEdit(this);
 	textBox->setReadOnly(true);
 	textBox->setMinimumSize(150, 150);
 	textBox->setText(getModelText());
+}
 
+void Window::connectWidgets()
+{
 	// Connect the slider widget's position to the progress bar widget's value.
 	QObject::connect(slider, SIGNAL (sliderMoved(int)), progress_bar, SLOT (setValue(int)));
 
@@ -56,9 +97,10 @@ Window::Window(QWidget * Parent)
 
 	// Connect the check box's stateChanged signal to the setSliderTracking() function call.
 	QObject::connect(checkBox, SIGNAL (stateChanged(int)), this, SLOT(setSliderTracking(int)));
+}
 
-	// Formatting main window
-
+void Window::formatWindow()
+{
 	setMinimumSize(450, 200);
 	
 	QBoxLayout * mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);

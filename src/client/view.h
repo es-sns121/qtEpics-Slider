@@ -43,6 +43,23 @@ class Window : public QWidget
 		void valueChanged(const int & value);
 	
 	private:
+	
+		// Private initialization functions called from the constructor
+		void initProgressBar(const int & rangeLow,
+							const int & rangeHigh,
+							const int & value);
+		void initSlider(const int & rangeLow,
+							const int & rangeHigh,
+							const int & value);
+		void initCheckbox();
+		void initTextbox();
+		
+		// Connects necessary signals and slots of widgets
+		void connectWidgets();
+		// Adds widgets to a layout and sets main window layout
+		void formatWindow();
+		
+		// Retrieve the textual representation of the record from the model.
 		QString getModelText();
 
 		QTextEdit * textBox;			// Text box for textual data

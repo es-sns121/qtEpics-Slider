@@ -60,7 +60,7 @@ class Model : public epicsThreadRunable
 		void initValue();
 		void initText();
 		void initDisplay();
-		// void initControl();
+		// void initAlarmLimit();
 		void initThread();
 
 		// pvaClient objects that facilitate communication to record on database server
