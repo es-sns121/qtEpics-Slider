@@ -60,6 +60,7 @@ class Model : public epicsThreadRunable
 		void initValue();
 		void initText();
 		void initDisplay();
+		// void initControl();
 		void initThread();
 
 		// pvaClient objects that facilitate communication to record on database server
@@ -73,6 +74,8 @@ class Model : public epicsThreadRunable
 
 		// Pointer to the display structure that is retrieved from the record.
 		epics::pvData::PVStructurePtr display;
+		// Pointer to the control structure that is retrieved from the record.
+		epics::pvData::PVStructurePtr control;
 		
 }; // class Model
 

@@ -47,7 +47,7 @@ class Window : public QWidget
 
 		QTextEdit * textBox;			// Text box for textual data
 		QProgressBar * progress_bar;	// Progress bar to show current value in its range
-		QSlider * slider;				// Slider to control currnet value in its range
+		QSlider * slider;				// Slider to control current value in its range
 		QCheckBox * checkBox;			// Check box to enable/disable slider value tracking
 		Model * model;					// Object that handles application data	
 };

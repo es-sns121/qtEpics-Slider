@@ -15,7 +15,7 @@ Window::Window(QWidget * Parent)
 {
 	model = new Model((void*) this, "testRecord");
 
-// Connect the view's static callback wrapper function to the model
+	// Connect the view's static callback wrapper function to the model
 	model->setCallback(&WrapperToCallback);
 
 	int rangeLow = (int) model->getRangeMin();
@@ -25,7 +25,7 @@ Window::Window(QWidget * Parent)
 	progress_bar = new QProgressBar(this);
 	progress_bar->setRange(rangeLow, rangeHigh);
 	progress_bar->setValue(value);		
-// Get rid of the '%' in the progress bar's text.
+	// Get rid of the '%' in the progress bar's text.
 	progress_bar->setFormat("%p");
 
 	slider = new QSlider(this);
@@ -36,7 +36,9 @@ Window::Window(QWidget * Parent)
 									// tracking by default. This means that only the final position of the 
 									// slider will emit a 'value changed' signal.
 
+	// The checkbox allows enabling/disabling of the slider's value tracking mode.
 	checkBox = new QCheckBox("Slider Value Tracking", this);
+	checkBox->setToolTip(tr("Slider value tracking is disabled."));
 
 	textBox = new QTextEdit(this);
 	textBox->setReadOnly(true);
@@ -116,10 +118,12 @@ void Window::setSliderTracking(const int & state)
 	if ( state == Qt::Unchecked ) {
 		
 		slider->setTracking(false);		
+		checkBox->setToolTip(tr("Slider value tracking is disabled."));
 	
 	} else if ( state == Qt::Checked ) {
 	
 		slider->setTracking(true);
+		checkBox->setToolTip(tr("Slider value tracking is enabled."));
 	
 	} else {
 		// error. checkbox tristate is somehow enabled.	
