@@ -84,6 +84,7 @@ void Record::initPvt()
 	pvDisplay.attach(field);
 	display.setLow(0.0);
 	display.setHigh(100.0);
+	display.setUnits("u/m");
 	pvDisplay.set(display);
 
 	initAlarmLimit();

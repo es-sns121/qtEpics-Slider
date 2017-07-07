@@ -31,6 +31,7 @@ Limits::Limits(QWidget * parent)
 
 	setLayout(mainLayout);
 }
+
 void Limits::initLowAlarm()
 {
 	lowAlarm = new QLabel(this);
@@ -84,10 +85,16 @@ const char * doubleToString(const double & value)
 	return str.c_str();
 }
 
+void Limits::setUnits(const string & _units)
+{
+	units = " " + _units;	
+}
+
 void Limits::setLowAlarm (const double & value)
 {
 	string str("low alarm: ");
 	str += string(doubleToString(value));
+	str += units; 
 	lowAlarm->setText(QString(str.c_str()));
 }
 
@@ -95,6 +102,7 @@ void Limits::setLowWarning (const double & value)
 {
 	string str("low warning: ");
 	str += string(doubleToString(value));
+	str += units; 
 	lowWarning->setText(QString(str.c_str()));
 }
 
@@ -102,6 +110,7 @@ void Limits::setHighWarning (const double & value)
 {
 	string str("high warning: ");
 	str += string(doubleToString(value));
+	str += units; 
 	highWarning->setText(QString(str.c_str()));
 }
 
@@ -109,6 +118,7 @@ void Limits::setHighAlarm (const double & value)
 {
 	string str("high alarm: ");
 	str += string(doubleToString(value));
+	str += units; 
 	highAlarm->setText(QString(str.c_str()));
 }
 
@@ -147,8 +157,9 @@ void Window::initProgressBar(
 	progress_bar->setRange(rangeLow, rangeHigh);
 	progress_bar->setValue(value);		
 	// Get rid of the '%' in the progress bar's text.
-	progress_bar->setFormat("%p");
-
+	string format = "%p " + model->getUnits(); 
+	progress_bar->setFormat(format.c_str());
+	
 	updateProgressBarColor(value);
 }
 
@@ -176,7 +187,8 @@ void Window::initSlider(
 void Window::initLimits()
 {
 	limits = new Limits(this);
-	
+
+	limits->setUnits(model->getUnits());
 	limits->setLowAlarm(model->getLowAlarm());
 	limits->setLowWarning(model->getLowWarning());
 	limits->setHighWarning(model->getHighWarning());

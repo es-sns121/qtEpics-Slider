@@ -25,6 +25,7 @@ class Limits : public QWidget
 		
 		explicit Limits(QWidget * Parent = 0);
 	
+		void setUnits(const std::string & _units);
 		void setLowAlarm(const double & value);	
 		void setLowWarning(const double & value);	
 		void setHighWarning(const double & value);	
@@ -36,6 +37,8 @@ class Limits : public QWidget
 		void initLowWarning();
 		void initHighWarning();
 		void initHighAlarm();
+		
+		std::string units;
 
 		QLabel * lowAlarm;		// Value at which the low alarm will be triggered.
 		QLabel * lowWarning;	// Value at which the low warning will be triggered.

@@ -95,6 +95,11 @@ double Model::getRangeMax()
 	return display->getSubField<PVDouble>("limitHigh")->get();
 }
 
+string Model::getUnits()
+{
+	return display->getSubField<PVString>("units")->get();
+}
+
 // Gets the low alarm value from the alarm limit structure
 double Model::getLowAlarm()
 {

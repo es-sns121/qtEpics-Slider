@@ -21,6 +21,7 @@ class Model : public epicsThreadRunable
 		// Accessor functions to the display structure
 		double getRangeMax();
 		double getRangeMin();
+		std::string getUnits();
 
 		// Accessor functions to the alarmLimit structure
 		double getLowAlarm();
@@ -54,8 +55,8 @@ class Model : public epicsThreadRunable
 		// Code that the monitor thread will run
 		void run();
 		
-		// Pointer to view's callback function. Called when monitor detects change in 
-		// record data 
+		// Pointer to view's callback function. Called when monitor detects a change in 
+		// the record data 
 		void (*callbackFunc)(void *, const int &);
 	
 		// Pointer to view object
