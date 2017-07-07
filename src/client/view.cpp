@@ -5,16 +5,14 @@
 
 #include "view.h"
 
+#include <stdlib.h>
 #include <iostream>
 #include <sstream>
 
 #include <QBoxLayout>
 #include <QGraphicsColorizeEffect>
 	
-using std::cout;
-using std::endl;
-using std::ostringstream;
-using std::string;
+using namespace std;
 
 Window::Window(QWidget * parent) {
 	model = new Model((void *) this, "testRecord");
@@ -33,7 +31,7 @@ Window::Window(QWidget * parent) {
 	// Connect the view's 'value changed' signal to the updateViewValue() function call.
 	QObject::connect(this, SIGNAL (valueChanged(int)), this, SLOT (updateViewValue(int)));
 
-	setMinimumSize(400, 400);
+	setMinimumSize(450, 200);
 
 	QBoxLayout * layout = new QBoxLayout(QBoxLayout::TopToBottom);
 	layout->addWidget(tabWidget);
@@ -209,6 +207,9 @@ DataTab::DataTab(QWidget * parent, Model * _model)
 	connectWidgets();
 	
 	formatDataTab();
+
+	setValue(value);
+	setUnits();
 }
 
 void DataTab::initProgressBar(
@@ -272,16 +273,21 @@ void DataTab::connectWidgets()
 
 void DataTab::formatDataTab()
 {
+	value = new QLabel(this);
+	units = new QLabel(this);
+	description = new QLabel(this);
+
 	setMinimumSize(450, 200);
 	
 	QBoxLayout * mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 	
-	mainLayout->setSpacing(10);
 	mainLayout->addWidget(progress_bar);
 	mainLayout->addWidget(checkBox);
 	mainLayout->addWidget(slider);
 	mainLayout->addWidget(limits);
-	
+	mainLayout->addWidget(value);
+	mainLayout->addWidget(units);
+
 	setLayout(mainLayout);
 
 	setWindowTitle(tr("qtEpics slider client"));
@@ -332,8 +338,6 @@ void DataTab::updateProgressBarColor(const int & value)
 
 
 // Sets slider value tracking to current checkbox state.
-// Unchecked -> disabled
-// Checed	 -> enabled
 void DataTab::setSliderTracking(const int & state)
 {
 	if (state == Qt::Unchecked) {
@@ -348,16 +352,28 @@ void DataTab::setSliderTracking(const int & state)
 	
 	} else {
 		// error. checkbox tristate is somehow enabled.	
-		// TODO: 
-		//	what to do? Exception? Exit? 
-		//	Currently ignoring error and setting slider into safest tracking
-		//	setting .
 		slider->setTracking(false);		
 	}
 }
 
+void DataTab::setValue(const int & value)
+{
+	string str = "value: ";
+	ostringstream ostr;
+	ostr << value;
+	str += ostr.str();
+	this->value->setText(QString(str.c_str()));
+}
+
+void DataTab::setUnits() {
+	string str = "units: ";
+	str += model->getUnits();
+	units->setText(QString(str.c_str()));
+}
+
 void DataTab::updateData(const int & value)
 {
+	setValue(value);	
 	slider->setValue(value);
 	progress_bar->setValue(value);
 	updateProgressBarColor(value);
@@ -378,7 +394,7 @@ void StructTab::initTextbox()
 {
 	textBox = new QTextEdit(this);
 	textBox->setReadOnly(true);
-	textBox->setMinimumSize(200, 300);
+	textBox->setMinimumSize(200, 200);
 	textBox->setText(getModelText());
 }
 

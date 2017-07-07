@@ -87,10 +87,19 @@ class DataTab : public QWidget
 		// Updates the progress bar's color based on the alarmLimit data in the model. 
 		void updateProgressBarColor(const int & value);
 
+		void setValue(const int & value);
+		void setUnits();
+
 		QProgressBar * progress_bar;	// Progress bar to show current value in its range
 		QCheckBox * checkBox;			// Check box to enable/disable slider value tracking
 		QSlider * slider;				// Slider to control current value in its range
+		
 		Limits * limits;				// Widget to display data from alarm limit structure
+		
+		QLabel * value;					// Display record's scalar value
+		QLabel * units;					// Display record's units string
+		QLabel * description;			// Display record's description string
+		
 		Model * model;					// Object that handles application data	
 };
 
