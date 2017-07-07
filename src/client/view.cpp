@@ -7,13 +7,68 @@
 
 #include <iostream>
 #include <sstream>
+
+#include <QBoxLayout>
+#include <QGraphicsColorizeEffect>
+	
 using std::cout;
 using std::endl;
 using std::ostringstream;
 using std::string;
 
-#include <QBoxLayout>
-#include <QGraphicsColorizeEffect>
+Window::Window(QWidget * parent) {
+	model = new Model((void *) this, "testRecord");
+
+	// Connect the view's static callback wrapper function to the model
+	model->setCallback(&WrapperToCallback);
+
+	dataTab = new DataTab(this, model), 
+	structTab = new StructTab(this, model); 	
+
+	tabWidget = new QTabWidget(this);
+	
+	tabWidget->addTab(dataTab, "Record Data");
+	tabWidget->addTab(structTab, "Record Structure");
+
+	// Connect the view's 'value changed' signal to the updateViewValue() function call.
+	QObject::connect(this, SIGNAL (valueChanged(int)), this, SLOT (updateViewValue(int)));
+}
+
+// Static wrapper function to window's callback member function
+void Window::WrapperToCallback(void * ptrToObj, const int & value)
+{
+	Window * window = (Window *) ptrToObj;
+	window->callback(value);
+}
+
+// This is used instead of calling 'setValue' on the widgets directly becuase it would be 
+// called from a seperate thread. This allows the main event thread to handle repaints 
+void Window::callback(const int & value)
+{
+	emit valueChanged(value);
+}
+
+QString StructTab::getModelText()
+{
+	std::string ret = model->getText();
+	return QString(ret.c_str());
+}
+
+// Updates value of view when model is updated by its monitor
+void Window::updateViewValue(const int & value)
+{
+	// Block signal emition. This prevents signal loops when 'setValue' is called
+	blockSignals(true);
+
+	// Update widget values based on the new value from the model
+	
+	dataTab->updateData(value);
+	structTab->updateData();
+
+	// Unblock signal emition
+	blockSignals(false);
+}
+
 
 Limits::Limits(QWidget * parent)
 {
@@ -21,7 +76,9 @@ Limits::Limits(QWidget * parent)
 	initLowWarning();
 	initHighWarning();
 	initHighAlarm();
-	
+
+	setMinimumHeight(60);
+
 	QBoxLayout * mainLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 
 	mainLayout->addWidget(lowAlarm);
@@ -41,6 +98,7 @@ void Limits::initLowAlarm()
 	lowAlarmEffect->setStrength(1.0);
 	lowAlarmEffect->setColor(Qt::darkRed);
 	lowAlarm->setGraphicsEffect(lowAlarmEffect);
+	lowAlarm->setWordWrap(true);
 }
 
 void Limits::initLowWarning()
@@ -52,6 +110,7 @@ void Limits::initLowWarning()
 	lowWarningEffect->setStrength(1.0);
 	lowWarningEffect->setColor(Qt::darkYellow);
 	lowWarning->setGraphicsEffect(lowWarningEffect);
+	lowWarning->setWordWrap(true);
 }
 
 void Limits::initHighWarning()
@@ -63,6 +122,7 @@ void Limits::initHighWarning()
 	highWarningEffect->setStrength(1.0);
 	highWarningEffect->setColor(Qt::darkYellow);
 	highWarning->setGraphicsEffect(highWarningEffect);
+	highWarning->setWordWrap(true);
 }
 
 void Limits::initHighAlarm()
@@ -74,6 +134,7 @@ void Limits::initHighAlarm()
 	highAlarmEffect->setStrength(1.0);
 	highAlarmEffect->setColor(Qt::darkRed);
 	highAlarm->setGraphicsEffect(highAlarmEffect);
+	highAlarm->setWordWrap(true);
 }
 
 const char * doubleToString(const double & value) 
@@ -122,12 +183,9 @@ void Limits::setHighAlarm (const double & value)
 	highAlarm->setText(QString(str.c_str()));
 }
 
-Window::Window(QWidget * parent)
+DataTab::DataTab(QWidget * parent, Model * _model)
 {
-	model = new Model((void*) this, "testRecord");
-
-	// Connect the view's static callback wrapper function to the model
-	model->setCallback(&WrapperToCallback);
+	model = _model;
 
 	int rangeLow = (int) model->getRangeMin();
 	int rangeHigh = (int) model->getRangeMax();
@@ -141,14 +199,12 @@ Window::Window(QWidget * parent)
 
 	initLimits();
 
-	initTextbox();
-	
 	connectWidgets();
 	
-	formatWindow();
+	formatDataTab();
 }
 
-void Window::initProgressBar(
+void DataTab::initProgressBar(
 	const int & rangeLow,
 	const int & rangeHigh,
 	const int & value)
@@ -163,14 +219,14 @@ void Window::initProgressBar(
 	updateProgressBarColor(value);
 }
 
-void Window::initCheckbox()
+void DataTab::initCheckbox()
 {
 	// The checkbox allows enabling/disabling of the slider's value tracking mode.
 	checkBox = new QCheckBox("Slider Value Tracking", this);
 	checkBox->setToolTip(tr("Slider value tracking is disabled."));
 }
 
-void Window::initSlider(
+void DataTab::initSlider(
 	const int & rangeLow,
 	const int & rangeHigh,
 	const int & value)
@@ -184,7 +240,7 @@ void Window::initSlider(
 									// slider will emit a 'value changed' signal.
 }
 
-void Window::initLimits()
+void DataTab::initLimits()
 {
 	limits = new Limits(this);
 
@@ -195,15 +251,7 @@ void Window::initLimits()
 	limits->setHighAlarm(model->getHighAlarm());
 }
 
-void Window::initTextbox()
-{
-	textBox = new QTextEdit(this);
-	textBox->setReadOnly(true);
-	textBox->setMinimumSize(150, 150);
-	textBox->setText(getModelText());
-}
-
-void Window::connectWidgets()
+void DataTab::connectWidgets()
 {
 	// Connect the slider widget's position to the progress bar widget's value.
 	QObject::connect(slider, SIGNAL (sliderMoved(int)), progress_bar, SLOT (setValue(int)));
@@ -211,24 +259,21 @@ void Window::connectWidgets()
 	// Connect the slider widget's 'value changed' to the view's updateModelValue() function call.
 	QObject::connect(slider, SIGNAL (valueChanged(int)), this , SLOT (updateModelValue(int)));
 
-	// Connect the view's 'value changed' signal to the updateViewValue() function call.
-	QObject::connect(this, SIGNAL (valueChanged(int)), this, SLOT (updateViewValue(int)));
-
 	// Connect the check box's stateChanged signal to the setSliderTracking() function call.
 	QObject::connect(checkBox, SIGNAL (stateChanged(int)), this, SLOT(setSliderTracking(int)));
 }
 
-void Window::formatWindow()
+void DataTab::formatDataTab()
 {
 	setMinimumSize(450, 200);
 	
 	QBoxLayout * mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);
-
+	
+	mainLayout->setSpacing(10);
 	mainLayout->addWidget(progress_bar);
 	mainLayout->addWidget(checkBox);
 	mainLayout->addWidget(slider);
 	mainLayout->addWidget(limits);
-	mainLayout->addWidget(textBox);
 	
 	setLayout(mainLayout);
 
@@ -243,37 +288,13 @@ void Window::closeEvent(QCloseEvent * event)
 	event->accept();
 }
 
-QString Window::getModelText()
-{
-	std::string ret = model->getText();
-	return QString(ret.c_str());
-}
-
 // Calls the model's putValue() method. This writes a new value to the record held
 // on the server.
-void Window::updateModelValue(const int & value) {
+void DataTab::updateModelValue(const int & value) {
 	model->putValue(value);
 }
 
-// Updates value of view when model is updated by its monitor
-void Window::updateViewValue(const int & value)
-{
-	QString text = getModelText();
-
-	// Block signal emition. This prevents signal loops when 'setValue' is called
-	blockSignals(true);
-
-	// Update widget values based on the new value from the model
-	slider->setValue(value);
-	progress_bar->setValue(value);
-	updateProgressBarColor(value);
-	textBox->setText(text);	
-
-	// Unblock signal emition
-	blockSignals(false);
-}
-
-void Window::updateProgressBarColor(const int & value)
+void DataTab::updateProgressBarColor(const int & value)
 {	
 	static double alarmLow    = model->getLowAlarm();
 	static double warningLow  = model->getLowWarning();
@@ -306,7 +327,7 @@ void Window::updateProgressBarColor(const int & value)
 // Sets slider value tracking to current checkbox state.
 // Unchecked -> disabled
 // Checed	 -> enabled
-void Window::setSliderTracking(const int & state)
+void DataTab::setSliderTracking(const int & state)
 {
 	if (state == Qt::Unchecked) {
 		
@@ -328,16 +349,31 @@ void Window::setSliderTracking(const int & state)
 	}
 }
 
-// Static wrapper function to window's callback member function
-void Window::WrapperToCallback(void * ptrToObj, const int & value)
+void DataTab::updateData(const int & value)
 {
-	Window * window = (Window *) ptrToObj;
-	window->callback(value);
+	slider->setValue(value);
+	progress_bar->setValue(value);
+	updateProgressBarColor(value);
 }
 
-// This is used instead of calling 'setValue' on the widgets directly becuase it would be 
-// called from a seperate thread. This allows the main event thread to handle repaints 
-void Window::callback(const int & value)
+StructTab::StructTab(QWidget * parent, Model * _model) 
 {
-	emit valueChanged(value);
+	model = _model;
+
+	initTextbox();
+}
+
+void StructTab::initTextbox()
+{
+	textBox = new QTextEdit(this);
+	textBox->setReadOnly(true);
+	textBox->setMinimumSize(200, 300);
+	textBox->setText(getModelText());
+}
+
+void StructTab::updateData()
+{
+	QString text = getModelText();
+
+	textBox->setText(text);	
 }

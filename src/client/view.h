@@ -8,13 +8,14 @@
 
 #include "model.h"
 
+#include <QWidget>
+#include <QTabWidget>
 #include <QCheckBox>
 #include <QCloseEvent>
 #include <QLabel>
 #include <QProgressBar>
 #include <QSlider>
 #include <QTextEdit>
-#include <QWidget>
 
 // Widget to display contents of alarm limit structure.
 class Limits : public QWidget 
@@ -46,33 +47,24 @@ class Limits : public QWidget
 		QLabel * highAlarm;		// Value at which the high alarm will be triggered.
 };
 
-// Main application window
-class Window : public QWidget 
+// Tab that displays formatted record data. 
+class DataTab : public QWidget 
 {
 	Q_OBJECT
 
 	public: 
 		
-		explicit Window(QWidget * Parent = 0);
-	
-		// Static wrapper to callback member function
-		static void WrapperToCallback(void * ptrToObj, const int & value);
-		void callback(const int & value);
-		void closeEvent(QCloseEvent * event);
+		explicit DataTab(QWidget * Parent, Model * _model);
 
-	signals: 
-		
-		// Emitted when the value in the model is changed by the model's monitor.
-		void valueChanged(const int & value);
-	
+		void updateData(const int & value);
+
 	private slots:
 	
 		// Updates the value on the record through the model.
 		void updateModelValue(const int & value);
 		
-		// Updates the value in the view
-		void updateViewValue(const int & value);	
-
+		// TODO: Update tab values function
+	
 		// Sets the slider's value tracking setting
 		void setSliderTracking(const int & state);
 
@@ -87,17 +79,13 @@ class Window : public QWidget
 							const int & rangeHigh,
 							const int & value);
 		void initLimits();
-		void initTextbox();
 		
 		// Connects necessary signals and slots of widgets
 		void connectWidgets();
 		
 		// Adds widgets to a layout and sets main window layout
-		void formatWindow();
+		void formatDataTab();
 		
-		// Retrieve the textual representation of the record from the model.
-		QString getModelText();
-
 		// Updates the progress bar's color based on the alarmLimit data in the model. 
 		void updateProgressBarColor(const int & value);
 
@@ -105,8 +93,61 @@ class Window : public QWidget
 		QCheckBox * checkBox;			// Check box to enable/disable slider value tracking
 		QSlider * slider;				// Slider to control current value in its range
 		Limits * limits;				// Widget to display data from alarm limit structure
-		QTextEdit * textBox;			// Text box for textual data
 		Model * model;					// Object that handles application data	
+};
+
+// Tab that displays raw record data.
+class StructTab : public QWidget {
+
+	public :
+		
+		explicit StructTab(QWidget * parent, Model * _model);
+
+		void updateData();
+
+	private:
+		// Retrieve the textual representation of the record from the model.
+		QString getModelText();
+
+		void initTextbox();
+		
+		QTextEdit * textBox;	// Text box for textual data
+		Model * model;			// Object that handles application data	
+};
+
+class Window : public QWidget 
+{
+	Q_OBJECT 
+
+	public:
+		
+		explicit Window (QWidget * parent = 0);
+
+		// Static wrapper to callback member function
+		static void WrapperToCallback(void * ptrToObj, const int & value);
+		void closeEvent(QCloseEvent * event);
+
+	signals: 
+		
+		// Emitted when the value in the model is changed by the model's monitor.
+		void valueChanged(const int & value);
+	
+
+	private slots:
+		
+		// Updates the value in the view
+		void updateViewValue(const int & value);	
+
+	private:
+		void callback(const int & value);
+		
+		Model * model;
+
+		DataTab * dataTab;
+		StructTab * structTab;
+
+		QTabWidget * tabWidget;	
+
 };
 
 #endif // VIEW_H

@@ -1,53 +1,41 @@
-TOP = ../..
+top = ../..
 
-BIN = $(TOP)/bin
-OBJ = $(TOP)/obj
-MOC = $(TOP)/moc
+bin = $(top)/bin
+obj = $(top)/obj
+moc = $(top)/moc
 
-CONFIG = $(TOP)/config/config.mk
+config = $(top)/config/config.mk
 
-include $(CONFIG)
+include $(config)
 
 # Executable
-EXE = $(BIN)/client
+exe = $(bin)/client
 
-# Source files
-SRC = main.cpp
-viewSRC = view.cpp
-mocSRC = moc_output.cpp
-modelSRC = model.cpp
-
-# Objects
-OBJS = $(OBJ)/model.o $(OBJ)/view.o $(OBJ)/moc.o
-
-# Client rule dependencies
-DEP = $(SRC) $(OBJS)
- 
 all: client
 
-client : $(DEP)
-	@mkdir -p $(TOP)/bin
-	g++ $(CPP_FLAGS) $(INC) $(LIB) $(SRC) $(OBJS) -o $(EXE)
+client : main.cpp $(obj)/model.o $(obj)/view.o $(obj)/moc_view.o 
+	@mkdir -p $(top)/bin
+	g++ $(CPP_FLAGS) $(INC) $(LIB) main.cpp $(obj)/model.o $(obj)/view.o $(obj)/moc_view.o -o $(exe)
 
-$(OBJ)/model.o: model.h $(modelSRC)
-	@mkdir -p $(TOP)/obj
-	g++ $(CPP_FLAGS) $(EPICS_INCLUDE) $(EPICS_LIBRARY) -c $(modelSRC) -o $(OBJ)/model.o
+$(obj)/model.o: model.h model.cpp
+	@mkdir -p $(top)/obj
+	g++ $(CPP_FLAGS) $(INC) $(LIB) -c model.cpp -o $(obj)/model.o
 
-$(OBJ)/view.o: $(viewSRC)
-	@mkdir -p $(TOP)/obj
-	g++ $(CPP_FLAGS) $(INC) $(LIB) -c $(viewSRC) -o $(OBJ)/view.o
+$(obj)/view.o: view.cpp
+	@mkdir -p $(top)/obj
+	g++ $(CPP_FLAGS) $(INC) $(LIB) -c view.cpp -o $(obj)/view.o
 
-$(OBJ)/moc.o: $(MOC)/$(mocSRC)
-	g++ $(CPP_FLAGS) $(INC) $(LIB) -c $(MOC)/$(mocSRC) -o $(OBJ)/moc.o
+$(obj)/moc_view.o: $(moc)/moc_view.cpp 	
+	g++ $(CPP_FLAGS) $(INC) $(LIB) -c $(moc)/moc_view.cpp -o $(obj)/moc_view.o
 
-$(MOC)/moc_output.cpp: view.h
-	@mkdir -p $(TOP)/moc
-	moc -o $(MOC)/moc_output.cpp view.h
+$(moc)/moc_view.cpp: view.h
+	@mkdir -p $(top)/moc
+	moc -o $(moc)/moc_view.cpp view.h
 
 .PHONY: clean
 clean:
-	@printf "Cleaning client binary, objects, and moc output file...\n"
-	@mkdir -p $(TOP)/bin
-	@mkdir -p $(TOP)/obj
-	@mkdir -p $(TOP)/moc
-	rm -f $(BIN)/$(EXE) $(OBJS) $(MOC)/*  
+	@printf "Cleaning client binary, object(s), and moc output file(s)...\n"
+	@mkdir -p $(top)/bin
+	@mkdir -p $(top)/obj
+	@mkdir -p $(top)/moc
+	rm -f $(bin)/$(exe) $(obj)/* $(moc)/*
