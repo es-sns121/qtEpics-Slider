@@ -6,13 +6,113 @@
 #include "view.h"
 
 #include <iostream>
+#include <sstream>
 using std::cout;
 using std::endl;
+using std::ostringstream;
+using std::string;
 
 #include <QBoxLayout>
 #include <QGraphicsColorizeEffect>
 
-Window::Window(QWidget * Parent)
+Limits::Limits(QWidget * parent)
+{
+	initLowAlarm();
+	initLowWarning();
+	initHighWarning();
+	initHighAlarm();
+	
+	QBoxLayout * mainLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+
+	mainLayout->addWidget(lowAlarm);
+	mainLayout->addWidget(lowWarning);
+	mainLayout->addWidget(highWarning);
+	mainLayout->addWidget(highAlarm);
+
+	setLayout(mainLayout);
+}
+void Limits::initLowAlarm()
+{
+	lowAlarm = new QLabel(this);
+	lowAlarm->setFrameStyle(QFrame::VLine || QFrame::Raised);
+	
+	QGraphicsColorizeEffect * lowAlarmEffect = new QGraphicsColorizeEffect;
+	lowAlarmEffect->setStrength(1.0);
+	lowAlarmEffect->setColor(Qt::darkRed);
+	lowAlarm->setGraphicsEffect(lowAlarmEffect);
+}
+
+void Limits::initLowWarning()
+{
+	lowWarning = new QLabel(this);
+	lowWarning->setFrameStyle(QFrame::VLine || QFrame::Raised);
+	
+	QGraphicsColorizeEffect * lowWarningEffect = new QGraphicsColorizeEffect;
+	lowWarningEffect->setStrength(1.0);
+	lowWarningEffect->setColor(Qt::darkYellow);
+	lowWarning->setGraphicsEffect(lowWarningEffect);
+}
+
+void Limits::initHighWarning()
+{
+	highWarning = new QLabel(this);
+	highWarning->setFrameStyle(QFrame::VLine || QFrame::Raised);
+	
+	QGraphicsColorizeEffect * highWarningEffect = new QGraphicsColorizeEffect;
+	highWarningEffect->setStrength(1.0);
+	highWarningEffect->setColor(Qt::darkYellow);
+	highWarning->setGraphicsEffect(highWarningEffect);
+}
+
+void Limits::initHighAlarm()
+{
+	highAlarm = new QLabel(this);
+	highAlarm->setFrameStyle(QFrame::VLine || QFrame::Raised);
+	
+	QGraphicsColorizeEffect * highAlarmEffect = new QGraphicsColorizeEffect;
+	highAlarmEffect->setStrength(1.0);
+	highAlarmEffect->setColor(Qt::darkRed);
+	highAlarm->setGraphicsEffect(highAlarmEffect);
+}
+
+const char * doubleToString(const double & value) 
+{
+	ostringstream ostr;
+	ostr << value;
+	string str = ostr.str();
+	
+	return str.c_str();
+}
+
+void Limits::setLowAlarm (const double & value)
+{
+	string str("low alarm: ");
+	str += string(doubleToString(value));
+	lowAlarm->setText(QString(str.c_str()));
+}
+
+void Limits::setLowWarning (const double & value)
+{
+	string str("low warning: ");
+	str += string(doubleToString(value));
+	lowWarning->setText(QString(str.c_str()));
+}
+
+void Limits::setHighWarning (const double & value)
+{
+	string str("high warning: ");
+	str += string(doubleToString(value));
+	highWarning->setText(QString(str.c_str()));
+}
+
+void Limits::setHighAlarm (const double & value)
+{
+	string str("high alarm: ");
+	str += string(doubleToString(value));
+	highAlarm->setText(QString(str.c_str()));
+}
+
+Window::Window(QWidget * parent)
 {
 	model = new Model((void*) this, "testRecord");
 
@@ -28,7 +128,9 @@ Window::Window(QWidget * Parent)
 	initSlider(rangeLow, rangeHigh, value);
 	
 	initCheckbox();
-	
+
+	initLimits();
+
 	initTextbox();
 	
 	connectWidgets();
@@ -50,6 +152,13 @@ void Window::initProgressBar(
 	updateProgressBarColor(value);
 }
 
+void Window::initCheckbox()
+{
+	// The checkbox allows enabling/disabling of the slider's value tracking mode.
+	checkBox = new QCheckBox("Slider Value Tracking", this);
+	checkBox->setToolTip(tr("Slider value tracking is disabled."));
+}
+
 void Window::initSlider(
 	const int & rangeLow,
 	const int & rangeHigh,
@@ -64,11 +173,14 @@ void Window::initSlider(
 									// slider will emit a 'value changed' signal.
 }
 
-void Window::initCheckbox()
+void Window::initLimits()
 {
-	// The checkbox allows enabling/disabling of the slider's value tracking mode.
-	checkBox = new QCheckBox("Slider Value Tracking", this);
-	checkBox->setToolTip(tr("Slider value tracking is disabled."));
+	limits = new Limits(this);
+	
+	limits->setLowAlarm(model->getLowAlarm());
+	limits->setLowWarning(model->getLowWarning());
+	limits->setHighWarning(model->getHighWarning());
+	limits->setHighAlarm(model->getHighAlarm());
 }
 
 void Window::initTextbox()
@@ -103,6 +215,7 @@ void Window::formatWindow()
 	mainLayout->addWidget(progress_bar);
 	mainLayout->addWidget(checkBox);
 	mainLayout->addWidget(slider);
+	mainLayout->addWidget(limits);
 	mainLayout->addWidget(textBox);
 	
 	setLayout(mainLayout);
