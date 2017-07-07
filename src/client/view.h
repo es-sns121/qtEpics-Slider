@@ -62,9 +62,7 @@ class DataTab : public QWidget
 	
 		// Updates the value on the record through the model.
 		void updateModelValue(const int & value);
-		
-		// TODO: Update tab values function
-	
+			
 		// Sets the slider's value tracking setting
 		void setSliderTracking(const int & state);
 

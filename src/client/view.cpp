@@ -32,6 +32,12 @@ Window::Window(QWidget * parent) {
 
 	// Connect the view's 'value changed' signal to the updateViewValue() function call.
 	QObject::connect(this, SIGNAL (valueChanged(int)), this, SLOT (updateViewValue(int)));
+
+	setMinimumSize(400, 400);
+
+	QBoxLayout * layout = new QBoxLayout(QBoxLayout::TopToBottom);
+	layout->addWidget(tabWidget);
+	setLayout(layout);
 }
 
 // Static wrapper function to window's callback member function
@@ -77,7 +83,8 @@ Limits::Limits(QWidget * parent)
 	initHighWarning();
 	initHighAlarm();
 
-	setMinimumHeight(60);
+	setMinimumHeight(30);
+	setMaximumHeight(100);
 
 	QBoxLayout * mainLayout = new QBoxLayout(QBoxLayout::LeftToRight);
 
@@ -361,6 +368,10 @@ StructTab::StructTab(QWidget * parent, Model * _model)
 	model = _model;
 
 	initTextbox();
+	
+	QBoxLayout * layout = new QBoxLayout(QBoxLayout::TopToBottom);
+	layout->addWidget(textBox);
+	setLayout(layout);
 }
 
 void StructTab::initTextbox()
