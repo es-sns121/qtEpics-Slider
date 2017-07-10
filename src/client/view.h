@@ -65,9 +65,12 @@ class DataTab : public QWidget
 		Model * model;
 
 		// Data fields
-		QLabel * _long;
-		QLabel * _double;
-		QLabel * _string;
+		QLabel * _long1;
+		QLabel * _long2;
+		QLabel * _double1;
+		QLabel * _double2;
+		QLabel * _string1;
+		QLabel * _string2;
 		QLabel * _boolean;
 };
 

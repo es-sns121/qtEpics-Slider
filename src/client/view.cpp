@@ -123,19 +123,25 @@ DataTab::DataTab(QWidget * parent, Model * model)
 
 void DataTab::initLabels()
 {
-	_long    = new QLabel(this);
-	_double  = new QLabel(this);
-	_string  = new QLabel(this);
-	_boolean = new QLabel(this);
+	_long1    = new QLabel(this);
+	_double1  = new QLabel(this);
+	_string1  = new QLabel(this);
+	_long2    = new QLabel(this);
+	_double2  = new QLabel(this);
+	_string2  = new QLabel(this);
+	_boolean  = new QLabel(this);
 }
 
 void DataTab::formatDataTab()
 {
 	QBoxLayout * layout = new QBoxLayout(QBoxLayout::TopToBottom);
 
-	layout->addWidget(_long);
-	layout->addWidget(_double);
-	layout->addWidget(_string);
+	layout->addWidget(_long1);
+	layout->addWidget(_long2);
+	layout->addWidget(_double1);
+	layout->addWidget(_double2);
+	layout->addWidget(_string1);
+	layout->addWidget(_string2);
 	layout->addWidget(_boolean);
 
 	setLayout(layout);
@@ -143,20 +149,32 @@ void DataTab::formatDataTab()
 
 void DataTab::updateData()
 {
-	long long_value = model->getLong();
-	string long_string = "long: " + string(longToString(long_value));
-	_long->setText(QString(long_string.c_str()));	
+	long long_value = model->getLong("long1");
+	string long_string = "long 1 : " + string(longToString(long_value));
+	_long1->setText(QString(long_string.c_str()));	
 	
-	double double_value = model->getDouble();
-	string double_string = "double: " + string(doubleToString(double_value));
-	_double->setText(QString(double_string.c_str()));
+	long_value = model->getLong("long2");
+	long_string = "long 2 : " + string(longToString(long_value));
+	_long2->setText(QString(long_string.c_str()));	
 	
-	string string_value = model->getString();
-	string string_string = "string: " + string_value;
-	_string->setText(QString(string_string.c_str()));
+	double double_value = model->getDouble("double1");
+	string double_string = "double 1 : " + string(doubleToString(double_value));
+	_double1->setText(QString(double_string.c_str()));
+	
+	double_value = model->getDouble("double2");
+	double_string = "double 2 : " + string(doubleToString(double_value));
+	_double2->setText(QString(double_string.c_str()));
+	
+	string string_value = model->getString("string1");
+	string string_string = "string 1 : " + string_value;
+	_string1->setText(QString(string_string.c_str()));
+	
+	string_value = model->getString("string2");
+	string_string = "string 2 : " + string_value;
+	_string2->setText(QString(string_string.c_str()));
 	
 	bool boolean_value = model->getBoolean();
-	string boolean_string = "boolean: " + string(booleanToString(boolean_value));
+	string boolean_string = "boolean : " + string(booleanToString(boolean_value));
 	_boolean->setText(QString(boolean_string.c_str()));
 }
 
@@ -185,6 +203,7 @@ Limits::Limits(QWidget * parent)
 void Limits::initLowAlarm()
 {
 	lowAlarm = new QLabel(this);
+	lowAlarm->setToolTip(QString("value at which the low alarm is triggered"));
 	lowAlarm->setFrameStyle(QFrame::VLine || QFrame::Raised);
 	
 	QGraphicsColorizeEffect * lowAlarmEffect = new QGraphicsColorizeEffect;
@@ -197,6 +216,7 @@ void Limits::initLowAlarm()
 void Limits::initLowWarning()
 {
 	lowWarning = new QLabel(this);
+	lowWarning->setToolTip(QString("value at which the low warning is triggered"));
 	lowWarning->setFrameStyle(QFrame::VLine || QFrame::Raised);
 	
 	QGraphicsColorizeEffect * lowWarningEffect = new QGraphicsColorizeEffect;
@@ -209,6 +229,7 @@ void Limits::initLowWarning()
 void Limits::initHighWarning()
 {
 	highWarning = new QLabel(this);
+	highWarning->setToolTip(QString("value at which the high warning is triggered"));
 	highWarning->setFrameStyle(QFrame::VLine || QFrame::Raised);
 	
 	QGraphicsColorizeEffect * highWarningEffect = new QGraphicsColorizeEffect;
@@ -221,6 +242,7 @@ void Limits::initHighWarning()
 void Limits::initHighAlarm()
 {
 	highAlarm = new QLabel(this);
+	highAlarm->setToolTip(QString("value at which the high alarm is triggered"));
 	highAlarm->setFrameStyle(QFrame::VLine || QFrame::Raised);
 	
 	QGraphicsColorizeEffect * highAlarmEffect = new QGraphicsColorizeEffect;
@@ -336,7 +358,9 @@ void SliderTab::initLimits(
 	const int & rangeHigh)
 {
 	lowLimit = new QLabel(this);
+	lowLimit->setToolTip(QString("lower limit of the value's range"));
 	highLimit = new QLabel(this);
+	highLimit->setToolTip(QString("upper limit of the value's range"));
 
 	// Initialize the low limit label
 	

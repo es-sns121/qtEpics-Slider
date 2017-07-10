@@ -38,9 +38,12 @@ RecordPtr Record::createRecord(const string & recordName)
 		add("alarmLimit", createAlarmLimitField())->
 		
 		// Relevant to the 'data tab' in the client
-		add("longInteger", pvLong)->
-		add("double", pvDouble)->
-		add("string", pvString)->
+		add("longInteger1", pvLong)->
+		add("longInteger2", pvLong)->
+		add("double1", pvDouble)->
+		add("double2", pvDouble)->
+		add("string1", pvString)->
+		add("string2", pvString)->
 		add("boolean", pvBoolean)->
 		
 		createStructure();

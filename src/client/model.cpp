@@ -54,9 +54,12 @@ void Model::initText()
 void Model::initData()
 {
 	get->get();
-	_long = getData->getPVStructure()->getSubField<PVLong>("longInteger")->get();
-	_double = getData->getPVStructure()->getSubField<PVDouble>("double")->get();
-	_string = getData->getPVStructure()->getSubField<PVString>("string")->get();
+	_long1 = getData->getPVStructure()->getSubField<PVLong>("longInteger1")->get();
+	_double1 = getData->getPVStructure()->getSubField<PVDouble>("double1")->get();
+	_string1 = getData->getPVStructure()->getSubField<PVString>("string1")->get();
+	_long2 = getData->getPVStructure()->getSubField<PVLong>("longInteger2")->get();
+	_double2 = getData->getPVStructure()->getSubField<PVDouble>("double2")->get();
+	_string2 = getData->getPVStructure()->getSubField<PVString>("string2")->get();
 	_boolean = getData->getPVStructure()->getSubField<PVBoolean>("boolean")->get();
 }
 
@@ -151,19 +154,28 @@ string Model::dumpRecordToString()
 	return ss.str();
 }
 
-long Model::getLong()
+long Model::getLong(const std::string & select)
 {
-	return _long;
+	if (select.compare("long1") == 0)
+		return _long1;
+	else
+		return _long2;
 }
 
-double Model::getDouble()
+double Model::getDouble(const std::string & select)
 {
-	return _double;
+	if (select.compare("double1") == 0)
+		return _double1;
+	else
+		return _double2;
 }
 
-string Model::getString()
+string Model::getString(const std::string & select)
 {
-	return _string;
+	if (select.compare("string1") == 0)
+		return _string1;
+	else
+		return _string2;
 }
 
 bool Model::getBoolean()
@@ -193,9 +205,12 @@ void Model::run()
 		// Update local copies
 		value = pvStructure->getSubField<PVInt>("value")->get();
 		text = dumpRecordToString(); 
-		_long = pvStructure->getSubField<PVLong>("longInteger")->get();
-		_double = pvStructure->getSubField<PVDouble>("double")->get();
-		_string = pvStructure->getSubField<PVString>("string")->get();
+		_long1 = pvStructure->getSubField<PVLong>("longInteger1")->get();
+		_double1 = pvStructure->getSubField<PVDouble>("double1")->get();
+		_string1 = pvStructure->getSubField<PVString>("string1")->get();
+		_long2 = pvStructure->getSubField<PVLong>("longInteger2")->get();
+		_double2 = pvStructure->getSubField<PVDouble>("double2")->get();
+		_string2 = pvStructure->getSubField<PVString>("string2")->get();
 		_boolean = pvStructure->getSubField<PVBoolean>("boolean")->get();
 		
 		monitor->releaseEvent();

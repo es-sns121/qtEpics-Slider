@@ -38,9 +38,9 @@ class Model : public epicsThreadRunable
 		// Gets current text from the record.
 		std::string getText();
 
-		long 		getLong();
-		double 		getDouble();
-		std::string getString();
+		long 		getLong(const std::string & select);
+		double 		getDouble(const std::string & select);
+		std::string getString(const std::string & select);
 		bool 		getBoolean();
 
 		void setCallback(void (*_callbackFunc)(void *, const int &));
@@ -52,9 +52,12 @@ class Model : public epicsThreadRunable
 		
 		
 		// Data fields held on record.
-		long   		_long;
-		double 		_double;
-		std::string _string;
+		long   		_long1;
+		long   		_long2;
+		double 		_double1;
+		double 		_double2;
+		std::string _string1;
+		std::string _string2;
 		bool 		_boolean;
 		
 		// Dumps the record's current structure to a string representation
