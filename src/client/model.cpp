@@ -1,8 +1,7 @@
 
 // model.cpp
 
-// source file that implements member functions defined in 
-// 'model.h'
+// source file that implements member functions defined in 'model.h'
 
 #include "model.h"
 #include <sstream>
@@ -23,7 +22,7 @@ Model::Model (void * _view, const string & channelName)
 	initThread();
 }
 
-// initializes the pva objects
+// Initializes the pva objects.
 void Model::initPva(const string & channelName)
 {
 	pva = PvaClient::get();
@@ -40,44 +39,51 @@ void Model::initPva(const string & channelName)
 
 }
 
+// Initialize the value field.
 void Model::initValue()
 {
 	get->get();
 	value = getData->getPVStructure()->getSubField<PVInt>("value")->get();
 }
 
+// Initialize the text string with the record contents.
 void Model::initText()
 {
 	text = dumpRecordToString(); 
 }
 
+// Initialize the data fields.
 void Model::initData()
 {
 	get->get();
+	
 	_long1 = getData->getPVStructure()->getSubField<PVLong>("longInteger1")->get();
-	_double1 = getData->getPVStructure()->getSubField<PVDouble>("double1")->get();
-	_string1 = getData->getPVStructure()->getSubField<PVString>("string1")->get();
 	_long2 = getData->getPVStructure()->getSubField<PVLong>("longInteger2")->get();
+	
+	_double1 = getData->getPVStructure()->getSubField<PVDouble>("double1")->get();
 	_double2 = getData->getPVStructure()->getSubField<PVDouble>("double2")->get();
+	
+	_string1 = getData->getPVStructure()->getSubField<PVString>("string1")->get();
 	_string2 = getData->getPVStructure()->getSubField<PVString>("string2")->get();
+	
 	_boolean = getData->getPVStructure()->getSubField<PVBoolean>("boolean")->get();
 }
 
-// initializes the display structure pointer.
+// Initializes the display structure pointer.
 void Model::initDisplay()
 {
 	get->get();
 	display = getData->getPVStructure()->getSubField<PVStructure>("display");
 }
 
-// initializes the display structure pointer.
+// Initializes the display structure pointer.
 void Model::initAlarmLimit()
 {
 	get->get();
 	alarmLimit = getData->getPVStructure()->getSubField<PVStructure>("alarmLimit");
 }
 
-// Allocates, initializes, and starts a thread for the monitor to run in
+// Allocates, initializes, and starts a thread for the monitor to run in.
 void Model::initThread()
 {
 	monitorThread = new epicsThread(*this, "monitorThread", epicsThreadGetStackSize(epicsThreadStackSmall));
@@ -96,55 +102,56 @@ string Model::getText()
 	return text; 
 }
 
-// Gets the minimum range value from the display structure
+// Gets the minimum range value from the display structure.
 double Model::getRangeMin()
 {
 	return display->getSubField<PVDouble>("limitLow")->get();
 }
 
-// Gets the maximum range value from the display structure
+// Gets the maximum range value from the display structure.
 double Model::getRangeMax()
 {
 	return display->getSubField<PVDouble>("limitHigh")->get();
 }
 
+// Gets the units string from the display structure.
 string Model::getUnits()
 {
 	return display->getSubField<PVString>("units")->get();
 }
 
-// Gets the low alarm value from the alarm limit structure
+// Gets the low alarm value from the alarm limit structure.
 double Model::getLowAlarm()
 {
 	return alarmLimit->getSubField<PVDouble>("lowAlarmLimit")->get();
 }
 
-// Gets the low warning value from the alarm limit structure
+// Gets the low warning value from the alarm limit structure.
 double Model::getLowWarning()
 {
 	return alarmLimit->getSubField<PVDouble>("lowWarningLimit")->get();
 }
 
-// Gets the high warning value from the alarm limit structure
+// Gets the high warning value from the alarm limit structure.
 double Model::getHighWarning()
 {
 	return alarmLimit->getSubField<PVDouble>("highWarningLimit")->get();
 }
 
-// Gets the high alarm value from the alarm limit structure
+// Gets the high alarm value from the alarm limit structure.
 double Model::getHighAlarm() 
 {
 	return alarmLimit->getSubField<PVDouble>("highAlarmLimit")->get();
 }
 
-// Writes new value to record
+// Writes a new value to the record.
 void Model::putValue(const int & value)
 {
 	putData->getPVStructure()->getSubField<PVInt>("value")->put(value);
 	put->put();
 }
 
-// Dumps the record's current contents to string
+// Dumps the record's current contents to a string.
 string Model::dumpRecordToString()
 {
 	stringstream ss;
@@ -154,6 +161,7 @@ string Model::dumpRecordToString()
 	return ss.str();
 }
 
+// Accessor function to one of the long data fields.
 long Model::getLong(const std::string & select)
 {
 	if (select.compare("long1") == 0)
@@ -162,6 +170,7 @@ long Model::getLong(const std::string & select)
 		return _long2;
 }
 
+// Accessor function to one of the double data fields.
 double Model::getDouble(const std::string & select)
 {
 	if (select.compare("double1") == 0)
@@ -170,6 +179,7 @@ double Model::getDouble(const std::string & select)
 		return _double2;
 }
 
+// Accessor function to one of the string data fields.
 string Model::getString(const std::string & select)
 {
 	if (select.compare("string1") == 0)
@@ -205,12 +215,16 @@ void Model::run()
 		// Update local copies
 		value = pvStructure->getSubField<PVInt>("value")->get();
 		text = dumpRecordToString(); 
+		
 		_long1 = pvStructure->getSubField<PVLong>("longInteger1")->get();
-		_double1 = pvStructure->getSubField<PVDouble>("double1")->get();
-		_string1 = pvStructure->getSubField<PVString>("string1")->get();
 		_long2 = pvStructure->getSubField<PVLong>("longInteger2")->get();
+		
+		_double1 = pvStructure->getSubField<PVDouble>("double1")->get();
 		_double2 = pvStructure->getSubField<PVDouble>("double2")->get();
+		
+		_string1 = pvStructure->getSubField<PVString>("string1")->get();
 		_string2 = pvStructure->getSubField<PVString>("string2")->get();
+		
 		_boolean = pvStructure->getSubField<PVBoolean>("boolean")->get();
 		
 		monitor->releaseEvent();

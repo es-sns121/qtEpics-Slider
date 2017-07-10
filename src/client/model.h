@@ -1,8 +1,7 @@
 
 // model.h
 
-// Header file that defines the model's main class and 
-// member functions
+// Header file that defines the model's main class and member functions
 
 #ifndef MODEL_H
 #define MODEL_H
@@ -18,12 +17,12 @@ class Model : public epicsThreadRunable
 		
 		Model(void * _view, const std::string & channelName);
 	
-		// Accessor functions to the display structure
+		// Accessor functions to the display structure.
 		double getRangeMax();
 		double getRangeMin();
 		std::string getUnits();
 
-		// Accessor functions to the alarmLimit structure
+		// Accessor functions to the alarmLimit structure.
 		double getLowAlarm();
 		double getLowWarning();
 		double getHighWarning();
@@ -38,6 +37,7 @@ class Model : public epicsThreadRunable
 		// Gets current text from the record.
 		std::string getText();
 
+		// Accessor functions to the data fields.
 		long 		getLong(const std::string & select);
 		double 		getDouble(const std::string & select);
 		std::string getString(const std::string & select);
@@ -47,9 +47,8 @@ class Model : public epicsThreadRunable
 		
 	private:
 
-		int value;			// Value held on record
-		std::string text;	// Textual representation of the record
-		
+		int value;			// Value held on record.
+		std::string text;	// Textual representation of the record.
 		
 		// Data fields held on record.
 		long   		_long1;
@@ -60,24 +59,24 @@ class Model : public epicsThreadRunable
 		std::string _string2;
 		bool 		_boolean;
 		
-		// Dumps the record's current structure to a string representation
+		// Dumps the record's current structure to a string representation.
 		std::string dumpRecordToString();
 
 		// Monitor thread. Monitor needs to be in another thread to prevent blocking 
-		// of GUI event loop
+		// of GUI event loop.
 		epicsThread * monitorThread;
 	
-		// Code that the monitor thread will run
+		// Code that the monitor thread will run.
 		void run();
 		
 		// Pointer to view's callback function. Called when monitor detects a change in 
-		// the record data 
+		// the record data.
 		void (*callbackFunc)(void *, const int &);
 	
-		// Pointer to view object
+		// Pointer to the view object.
 		void * view;
 
-		// Private initialization functions called by the constructor
+		// Private initialization functions called by the constructor.
 		void initPva(const std::string & channelName);
 		void initValue();
 		void initText();
@@ -86,7 +85,7 @@ class Model : public epicsThreadRunable
 		void initAlarmLimit();
 		void initThread();
 
-		// pvaClient objects that facilitate communication to record on database server
+		// pvaClient objects that facilitate communication to record on database server.
 		epics::pvaClient::PvaClientPtr        pva;
 		epics::pvaClient::PvaClientChannelPtr channel;
 		epics::pvaClient::PvaClientPutPtr     put;
