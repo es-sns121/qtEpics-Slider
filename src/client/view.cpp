@@ -16,6 +16,7 @@ using namespace std;
 
 // MISC ===========================================================================================
 
+// Converts a long integer value to a string
 const char * longToString(const long & value)
 {
 	ostringstream ostr;
@@ -25,6 +26,7 @@ const char * longToString(const long & value)
 	return str.c_str();
 }
 
+// Converts a double value to a string
 const char * doubleToString(const double & value) 
 {
 	ostringstream ostr;
@@ -34,6 +36,7 @@ const char * doubleToString(const double & value)
 	return str.c_str();
 }
 
+// Converts a boolean value to a string
 const char * booleanToString(const bool & value)
 {
 	if (value)
@@ -124,10 +127,10 @@ DataTab::DataTab(QWidget * parent, Model * model)
 void DataTab::initLabels()
 {
 	_long1    = new QLabel(this);
-	_double1  = new QLabel(this);
-	_string1  = new QLabel(this);
 	_long2    = new QLabel(this);
+	_double1  = new QLabel(this);
 	_double2  = new QLabel(this);
+	_string1  = new QLabel(this);
 	_string2  = new QLabel(this);
 	_boolean  = new QLabel(this);
 }

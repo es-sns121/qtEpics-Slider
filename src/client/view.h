@@ -62,7 +62,7 @@ class DataTab : public QWidget
 		void initLabels();
 		void formatDataTab();
 
-		Model * model;
+		Model * model; // Object that handles application data
 
 		// Data fields
 		QLabel * _long1;
@@ -183,11 +183,11 @@ class Window : public QWidget
 		
 		void callback(const int & value);
 		
-		Model * model;
+		Model * model;			// Object that handles application data	
 
-		DataTab   * dataTab;
-		SliderTab * sliderTab;
-		StructTab * structTab;
+		DataTab   * dataTab;	// Tab contains multiple data fields
+		SliderTab * sliderTab;	// Tab contains a slider that manipulates a data field
+		StructTab * structTab;	// Tab contains a text box with a record structure dumped into it
 
 		QTabWidget * tabWidget;	
 
