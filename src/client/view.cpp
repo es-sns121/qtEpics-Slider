@@ -14,17 +14,32 @@
 	
 using namespace std;
 
+// MISC ===========================================================================================
+
+const char * doubleToString(const double & value) 
+{
+	ostringstream ostr;
+	ostr << value;
+	string str = ostr.str();
+	
+	return str.c_str();
+}
+
+// WIDNOW =========================================================================================
+
 Window::Window(QWidget * parent) {
 	model = new Model((void *) this, "testRecord");
 
 	// Connect the view's static callback wrapper function to the model
 	model->setCallback(&WrapperToCallback);
 
+	dataTab   = new DataTab(this, model);
 	sliderTab = new SliderTab(this, model), 
 	structTab = new StructTab(this, model); 	
 
 	tabWidget = new QTabWidget(this);
-	
+
+	tabWidget->addTab(dataTab, "Record Data");
 	tabWidget->addTab(sliderTab, "Record Slider");
 	tabWidget->addTab(structTab, "Record Structure");
 
@@ -52,12 +67,6 @@ void Window::callback(const int & value)
 	emit valueChanged(value);
 }
 
-QString StructTab::getModelText()
-{
-	std::string ret = model->getText();
-	return QString(ret.c_str());
-}
-
 // Updates value of view when model is updated by its monitor
 void Window::updateViewValue(const int & value)
 {
@@ -73,6 +82,44 @@ void Window::updateViewValue(const int & value)
 	blockSignals(false);
 }
 
+void Window::closeEvent(QCloseEvent * event)
+{
+	// TODO: How to shut down cleanly?
+	//	Need to stop monitor/channel somehow...
+	
+	event->accept();
+}
+
+// DATA ===========================================================================================
+
+DataTab::DataTab(QWidget * parent, Model * model)
+{
+	initLabels();
+
+	formatDataTab();
+}
+
+void DataTab::initLabels()
+{
+	_long    = new QLabel("long: ", this);
+	_double  = new QLabel("double: ", this);
+	_string  = new QLabel("string: ", this);
+	_boolean = new QLabel("boolean: ", this);
+}
+
+void DataTab::formatDataTab()
+{
+	QBoxLayout * layout = new QBoxLayout(QBoxLayout::TopToBottom);
+
+	layout->addWidget(_long);
+	layout->addWidget(_double);
+	layout->addWidget(_string);
+	layout->addWidget(_boolean);
+
+	setLayout(layout);
+}	
+
+// LIMITS =========================================================================================
 
 Limits::Limits(QWidget * parent)
 {
@@ -142,15 +189,6 @@ void Limits::initHighAlarm()
 	highAlarm->setWordWrap(true);
 }
 
-const char * doubleToString(const double & value) 
-{
-	ostringstream ostr;
-	ostr << value;
-	string str = ostr.str();
-	
-	return str.c_str();
-}
-
 void Limits::setUnits(const string & _units)
 {
 	units = " " + _units;	
@@ -187,6 +225,8 @@ void Limits::setHighAlarm (const double & value)
 	str += units; 
 	highAlarm->setText(QString(str.c_str()));
 }
+
+// SLIDER =========================================================================================
 
 SliderTab::SliderTab(QWidget * parent, Model * _model)
 {
@@ -293,14 +333,6 @@ void SliderTab::formatSliderTab()
 	setWindowTitle(tr("qtEpics slider client"));
 }
 
-void Window::closeEvent(QCloseEvent * event)
-{
-	// TODO: How to shut down cleanly?
-	//	Need to stop monitor/channel somehow...
-	
-	event->accept();
-}
-
 // Calls the model's putValue() method. This writes a new value to the record held
 // on the server.
 void SliderTab::updateModelValue(const int & value) {
@@ -379,6 +411,8 @@ void SliderTab::updateData(const int & value)
 	updateProgressBarColor(value);
 }
 
+// STRUCT =========================================================================================
+
 StructTab::StructTab(QWidget * parent, Model * _model) 
 {
 	model = _model;
@@ -403,4 +437,10 @@ void StructTab::updateData()
 	QString text = getModelText();
 
 	textBox->setText(text);	
+}
+
+QString StructTab::getModelText()
+{
+	std::string ret = model->getText();
+	return QString(ret.c_str());
 }

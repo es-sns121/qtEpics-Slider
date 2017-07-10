@@ -47,7 +47,29 @@ class Limits : public QWidget
 		QLabel * highAlarm;		// Value at which the high alarm will be triggered.
 };
 
-// Tab that displays formatted record data. 
+class DataTab : public QWidget
+{	
+	Q_OBJECT
+
+	public:
+		
+		explicit DataTab(QWidget * parent = 0, Model * model = 0);
+		
+	private:
+	
+		void initLabels();
+		void formatDataTab();
+
+		Model * model;
+
+		// Data fields
+		QLabel * _long;
+		QLabel * _double;
+		QLabel * _string;
+		QLabel * _boolean;
+};
+
+// Tab that displays a single record value along with a slider widget that can control it.
 class SliderTab : public QWidget 
 {
 	Q_OBJECT
@@ -150,6 +172,7 @@ class Window : public QWidget
 		
 		Model * model;
 
+		DataTab   * dataTab;
 		SliderTab * sliderTab;
 		StructTab * structTab;
 
