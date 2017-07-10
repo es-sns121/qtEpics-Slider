@@ -1,4 +1,4 @@
-// server/main.cpp
+// main.cpp
 
 // Main entry point for server application. 
 

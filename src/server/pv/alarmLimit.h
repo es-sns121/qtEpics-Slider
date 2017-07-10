@@ -1,3 +1,8 @@
+
+// alarmLimit.h
+
+// Functions relating to the creation of an alarmLimit_t structure.
+
 #ifndef ALARMLIMIT_H
 #define ALARMLIMIT_H
 

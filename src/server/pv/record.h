@@ -1,8 +1,7 @@
 
 // record.h
 
-// header file that defines the database and record class
-// for the server application
+// header file that defines the database and record class for the server application
 
 #ifndef RECORD_H
 #define RECORD_H

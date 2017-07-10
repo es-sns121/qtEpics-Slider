@@ -1,4 +1,4 @@
-// server/record.cpp
+// record.cpp
 
 // Source file that implements the creation of the database.
 
@@ -20,10 +20,10 @@ using namespace epics::pvAccess;
 using namespace epics::pvData;
 using namespace epics::pvDatabase;
 
-// Defined in src/server/pv/record.h
+// Defined in /server/pv/record.h
 using namespace Project; 
 
-// Creates a record
+// Creates a record.
 RecordPtr Record::createRecord(const string & recordName)
 {
 	static FieldCreatePtr   fieldCreate   = getFieldCreate();
@@ -32,12 +32,12 @@ RecordPtr Record::createRecord(const string & recordName)
 
 	StructureConstPtr top = fieldCreate->createFieldBuilder()->
 		
-		// Relevant to the 'slider tab' in the client
+		// Relevant to the 'slider tab' in the client.
 		add("value", pvInt)->
 		add("display", standardField->display())->
 		add("alarmLimit", createAlarmLimitField())->
 		
-		// Relevant to the 'data tab' in the client
+		// Relevant to the 'data tab' in the client.
 		add("longInteger1", pvLong)->
 		add("longInteger2", pvLong)->
 		add("double1", pvDouble)->
@@ -81,7 +81,7 @@ Record::Record(const string & recordName,
 {
 }
 
-// initialize the record
+// Initialize the record.
 void Record::initPvt()
 {
 	initPVRecord();
@@ -92,7 +92,7 @@ void Record::initPvt()
 
 	PVFieldPtr field = pvStructure->getSubField("display");
 
-	// Attach the display and initialize it
+	// Attach the display and initialize it.
 	pvDisplay.attach(field);
 	display.setLow(0.0);
 	display.setHigh(100.0);
@@ -102,7 +102,7 @@ void Record::initPvt()
 	initAlarmLimit();
 }
 
-// Initialize the alarm limit structure
+// Initialize the alarm limit structure.
 void Record::initAlarmLimit()
 {
 	PVStructurePtr pvStructure = getPVStructure();
@@ -122,6 +122,7 @@ void Record::initAlarmLimit()
 	
 }
 
+// No processing occurs. Definition included becuase process is virtual.
 void Record::process()
 {
 }
