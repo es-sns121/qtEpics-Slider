@@ -108,7 +108,7 @@ void Window::closeEvent(QCloseEvent * event)
 	event->accept();
 }
 
-// DATA ===========================================================================================
+// DATA TAB =======================================================================================
 
 DataTab::DataTab(QWidget * parent, Model * model)
 {
@@ -160,7 +160,7 @@ void DataTab::updateData()
 	_boolean->setText(QString(boolean_string.c_str()));
 }
 
-// LIMITS =========================================================================================
+// LIMITS OBJECT ==================================================================================
 
 Limits::Limits(QWidget * parent)
 {
@@ -267,7 +267,7 @@ void Limits::setHighAlarm (const double & value)
 	highAlarm->setText(QString(str.c_str()));
 }
 
-// SLIDER =========================================================================================
+// SLIDER TAB =====================================================================================
 
 SliderTab::SliderTab(QWidget * parent, Model * _model)
 {
@@ -301,7 +301,8 @@ void SliderTab::initProgressBar(
 	progress_bar = new QProgressBar(this);
 	progress_bar->setRange(rangeLow, rangeHigh);
 	progress_bar->setValue(value);		
-	// Get rid of the '%' in the progress bar's text.
+
+	// Shows the units string next to the current value
 	string format = "%p " + model->getUnits(); 
 	progress_bar->setFormat(format.c_str());
 	
@@ -481,7 +482,7 @@ void SliderTab::updateData(const int & value)
 	updateProgressBarColor(value);
 }
 
-// STRUCT =========================================================================================
+// STRUCT TAB =====================================================================================
 
 StructTab::StructTab(QWidget * parent, Model * _model) 
 {

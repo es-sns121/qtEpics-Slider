@@ -1,14 +1,14 @@
 
-all: server client
+all: server client testClient
 
 # =================================== Directories ============================================
 
-TOP = .
+top = .
 
-SRC = $(TOP)/src
-clientSRC = $(SRC)/client
-serverSRC = $(SRC)/server
-
+src = $(top)/src
+clientSRC = $(src)/client
+serverSRC = $(src)/server
+testClientSRC = $(src)/testClient
 # ======================================== Rules =============================================
 
 server:
@@ -21,9 +21,13 @@ client:
 	$(MAKE) -C $(clientSRC)
 	@printf "\n"
 
+testClient:
+	@printf "\nMaking testClient:\n\n"
+	$(MAKE) -C $(testClientSRC)
+
 .PHONY: clean
 clean: 
 	@printf "Cleaning binaries, objects, and moc output...\n"
-	$(MAKE) -C $(clientSRC) clean
-	$(MAKE) -C $(serverSRC) clean
-
+	$(MAKE) -C $(clientSRC)     clean
+	$(MAKE) -C $(serverSRC)     clean
+	$(MAKE) -C $(testClientSRC) clean

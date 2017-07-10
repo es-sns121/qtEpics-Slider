@@ -9,7 +9,7 @@ config = $(top)/config/config.mk
 include $(config)
 
 # Executable
-exe = $(bin)/client
+exe = $(bin)/clientUI
 
 all: client
 
@@ -30,7 +30,7 @@ $(obj)/moc_view.o: $(moc)/moc_view.cpp
 
 $(moc)/moc_view.cpp: view.h
 	@mkdir -p $(top)/moc
-	moc -o $(moc)/moc_view.cpp view.h
+	moc view.h -o $(moc)/moc_view.cpp 
 
 .PHONY: clean
 clean:
@@ -38,4 +38,4 @@ clean:
 	@mkdir -p $(top)/bin
 	@mkdir -p $(top)/obj
 	@mkdir -p $(top)/moc
-	rm -f $(bin)/$(exe) $(obj)/* $(moc)/*
+	rm -f $(exe) $(obj)/* $(moc)/*
