@@ -37,14 +37,26 @@ class Model : public epicsThreadRunable
 		
 		// Gets current text from the record.
 		std::string getText();
-		
+
+		long 		getLong();
+		double 		getDouble();
+		std::string getString();
+		bool 		getBoolean();
+
 		void setCallback(void (*_callbackFunc)(void *, const int &));
 		
 	private:
 
 		int value;			// Value held on record
 		std::string text;	// Textual representation of the record
-
+		
+		
+		// Data fields held on record.
+		long   		_long;
+		double 		_double;
+		std::string _string;
+		bool 		_boolean;
+		
 		// Dumps the record's current structure to a string representation
 		std::string dumpRecordToString();
 
@@ -66,6 +78,7 @@ class Model : public epicsThreadRunable
 		void initPva(const std::string & channelName);
 		void initValue();
 		void initText();
+		void initData();
 		void initDisplay();
 		void initAlarmLimit();
 		void initThread();

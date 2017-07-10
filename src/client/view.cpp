@@ -16,6 +16,15 @@ using namespace std;
 
 // MISC ===========================================================================================
 
+const char * longToString(const long & value)
+{
+	ostringstream ostr;
+	ostr << value;
+	string str = ostr.str();
+	
+	return str.c_str();
+}
+
 const char * doubleToString(const double & value) 
 {
 	ostringstream ostr;
@@ -23,6 +32,14 @@ const char * doubleToString(const double & value)
 	string str = ostr.str();
 	
 	return str.c_str();
+}
+
+const char * booleanToString(const bool & value)
+{
+	if (value)
+		return "true";
+	else
+		return "false";
 }
 
 // WIDNOW =========================================================================================
@@ -74,7 +91,8 @@ void Window::updateViewValue(const int & value)
 	blockSignals(true);
 
 	// Update widget values based on the new value from the model
-	
+
+	dataTab->updateData();
 	sliderTab->updateData(value);
 	structTab->updateData();
 
@@ -94,9 +112,13 @@ void Window::closeEvent(QCloseEvent * event)
 
 DataTab::DataTab(QWidget * parent, Model * model)
 {
+	this->model = model;
+	
 	initLabels();
 
 	formatDataTab();
+
+	updateData();
 }
 
 void DataTab::initLabels()
@@ -118,6 +140,25 @@ void DataTab::formatDataTab()
 
 	setLayout(layout);
 }	
+
+void DataTab::updateData()
+{
+	long long_value = model->getLong();
+	string long_string = "long: " + string(longToString(long_value));
+	_long->setText(QString(long_string.c_str()));	
+	
+	double double_value = model->getDouble();
+	string double_string = "double: " + string(doubleToString(double_value));
+	_double->setText(QString(double_string.c_str()));
+	
+	string string_value = model->getString();
+	string string_string = "string: " + string_value;
+	_string->setText(QString(string_string.c_str()));
+	
+	bool boolean_value = model->getBoolean();
+	string boolean_string = "boolean: " + string(booleanToString(boolean_value));
+	_boolean->setText(QString(boolean_string.c_str()));
+}
 
 // LIMITS =========================================================================================
 

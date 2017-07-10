@@ -55,6 +55,8 @@ class DataTab : public QWidget
 		
 		explicit DataTab(QWidget * parent = 0, Model * model = 0);
 		
+		void updateData();
+
 	private:
 	
 		void initLabels();

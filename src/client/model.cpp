@@ -50,6 +50,15 @@ void Model::initText()
 	text = dumpRecordToString(); 
 }
 
+void Model::initData()
+{
+	get->get();
+	_long = getData->getPVStructure()->getSubField<PVLong>("longInteger")->get();
+	_double = getData->getPVStructure()->getSubField<PVDouble>("double")->get();
+	_string = getData->getPVStructure()->getSubField<PVString>("string")->get();
+	_boolean = getData->getPVStructure()->getSubField<PVBoolean>("boolean")->get();
+}
+
 // initializes the display structure pointer.
 void Model::initDisplay()
 {
@@ -141,6 +150,26 @@ string Model::dumpRecordToString()
 	return ss.str();
 }
 
+long Model::getLong()
+{
+	return _long;
+}
+
+double Model::getDouble()
+{
+	return _double;
+}
+
+string Model::getString()
+{
+	return _string;
+}
+
+bool Model::getBoolean()
+{
+	return _boolean;
+}
+
 // Set the callback function
 void Model::setCallback(void (*_callbackFunc)(void *, const int &))
 {
@@ -163,6 +192,10 @@ void Model::run()
 		// Update local copies
 		value = pvStructure->getSubField<PVInt>("value")->get();
 		text = dumpRecordToString(); 
+		_long = pvStructure->getSubField<PVLong>("longInteger")->get();
+		_double = pvStructure->getSubField<PVDouble>("double")->get();
+		_string = pvStructure->getSubField<PVString>("string")->get();
+		_boolean = pvStructure->getSubField<PVBoolean>("boolean")->get();
 		
 		monitor->releaseEvent();
 		
