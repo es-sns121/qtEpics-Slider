@@ -20,12 +20,12 @@ Window::Window(QWidget * parent) {
 	// Connect the view's static callback wrapper function to the model
 	model->setCallback(&WrapperToCallback);
 
-	dataTab = new DataTab(this, model), 
+	sliderTab = new SliderTab(this, model), 
 	structTab = new StructTab(this, model); 	
 
 	tabWidget = new QTabWidget(this);
 	
-	tabWidget->addTab(dataTab, "Record Data");
+	tabWidget->addTab(sliderTab, "Record Slider");
 	tabWidget->addTab(structTab, "Record Structure");
 
 	// Connect the view's 'value changed' signal to the updateViewValue() function call.
@@ -66,7 +66,7 @@ void Window::updateViewValue(const int & value)
 
 	// Update widget values based on the new value from the model
 	
-	dataTab->updateData(value);
+	sliderTab->updateData(value);
 	structTab->updateData();
 
 	// Unblock signal emition
@@ -188,7 +188,7 @@ void Limits::setHighAlarm (const double & value)
 	highAlarm->setText(QString(str.c_str()));
 }
 
-DataTab::DataTab(QWidget * parent, Model * _model)
+SliderTab::SliderTab(QWidget * parent, Model * _model)
 {
 	model = _model;
 
@@ -206,13 +206,13 @@ DataTab::DataTab(QWidget * parent, Model * _model)
 
 	connectWidgets();
 	
-	formatDataTab();
+	formatSliderTab();
 
 	setValue(value);
 	setUnits();
 }
 
-void DataTab::initProgressBar(
+void SliderTab::initProgressBar(
 	const int & rangeLow,
 	const int & rangeHigh,
 	const int & value)
@@ -227,14 +227,14 @@ void DataTab::initProgressBar(
 	updateProgressBarColor(value);
 }
 
-void DataTab::initCheckbox()
+void SliderTab::initCheckbox()
 {
 	// The checkbox allows enabling/disabling of the slider's value tracking mode.
 	checkBox = new QCheckBox("Slider Value Tracking", this);
 	checkBox->setToolTip(tr("Slider value tracking is disabled."));
 }
 
-void DataTab::initSlider(
+void SliderTab::initSlider(
 	const int & rangeLow,
 	const int & rangeHigh,
 	const int & value)
@@ -248,7 +248,7 @@ void DataTab::initSlider(
 									// slider will emit a 'value changed' signal.
 }
 
-void DataTab::initLimits()
+void SliderTab::initLimits()
 {
 	limits = new Limits(this);
 
@@ -259,7 +259,7 @@ void DataTab::initLimits()
 	limits->setHighAlarm(model->getHighAlarm());
 }
 
-void DataTab::connectWidgets()
+void SliderTab::connectWidgets()
 {
 	// Connect the slider widget's position to the progress bar widget's value.
 	QObject::connect(slider, SIGNAL (sliderMoved(int)), progress_bar, SLOT (setValue(int)));
@@ -271,7 +271,7 @@ void DataTab::connectWidgets()
 	QObject::connect(checkBox, SIGNAL (stateChanged(int)), this, SLOT(setSliderTracking(int)));
 }
 
-void DataTab::formatDataTab()
+void SliderTab::formatSliderTab()
 {
 	value = new QLabel(this);
 	units = new QLabel(this);
@@ -303,11 +303,11 @@ void Window::closeEvent(QCloseEvent * event)
 
 // Calls the model's putValue() method. This writes a new value to the record held
 // on the server.
-void DataTab::updateModelValue(const int & value) {
+void SliderTab::updateModelValue(const int & value) {
 	model->putValue(value);
 }
 
-void DataTab::updateProgressBarColor(const int & value)
+void SliderTab::updateProgressBarColor(const int & value)
 {	
 	static double alarmLow    = model->getLowAlarm();
 	static double warningLow  = model->getLowWarning();
@@ -338,7 +338,7 @@ void DataTab::updateProgressBarColor(const int & value)
 
 
 // Sets slider value tracking to current checkbox state.
-void DataTab::setSliderTracking(const int & state)
+void SliderTab::setSliderTracking(const int & state)
 {
 	if (state == Qt::Unchecked) {
 		
@@ -356,7 +356,7 @@ void DataTab::setSliderTracking(const int & state)
 	}
 }
 
-void DataTab::setValue(const int & value)
+void SliderTab::setValue(const int & value)
 {
 	string str = "value: ";
 	ostringstream ostr;
@@ -365,13 +365,13 @@ void DataTab::setValue(const int & value)
 	this->value->setText(QString(str.c_str()));
 }
 
-void DataTab::setUnits() {
+void SliderTab::setUnits() {
 	string str = "units: ";
 	str += model->getUnits();
 	units->setText(QString(str.c_str()));
 }
 
-void DataTab::updateData(const int & value)
+void SliderTab::updateData(const int & value)
 {
 	setValue(value);	
 	slider->setValue(value);

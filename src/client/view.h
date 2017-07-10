@@ -48,13 +48,13 @@ class Limits : public QWidget
 };
 
 // Tab that displays formatted record data. 
-class DataTab : public QWidget 
+class SliderTab : public QWidget 
 {
 	Q_OBJECT
 
 	public: 
 		
-		explicit DataTab(QWidget * Parent, Model * _model);
+		explicit SliderTab(QWidget * Parent, Model * _model);
 
 		void updateData(const int & value);
 
@@ -82,7 +82,7 @@ class DataTab : public QWidget
 		void connectWidgets();
 		
 		// Adds widgets to a layout and sets main window layout
-		void formatDataTab();
+		void formatSliderTab();
 		
 		// Updates the progress bar's color based on the alarmLimit data in the model. 
 		void updateProgressBarColor(const int & value);
@@ -150,7 +150,7 @@ class Window : public QWidget
 		
 		Model * model;
 
-		DataTab * dataTab;
+		SliderTab * sliderTab;
 		StructTab * structTab;
 
 		QTabWidget * tabWidget;	
