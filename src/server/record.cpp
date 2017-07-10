@@ -31,13 +31,18 @@ RecordPtr Record::createRecord(const string & recordName)
 	static PVDataCreatePtr  pvDataCreate  = getPVDataCreate();
 
 	StructureConstPtr top = fieldCreate->createFieldBuilder()->
+		
+		// Relevant to the 'slider tab' in the client
 		add("value", pvInt)->
 		add("display", standardField->display())->
 		add("alarmLimit", createAlarmLimitField())->
+		
+		// Relevant to the 'data tab' in the client
 		add("longInteger", pvLong)->
 		add("double", pvDouble)->
 		add("string", pvString)->
 		add("boolean", pvBoolean)->
+		
 		createStructure();
 
 	PVStructurePtr pvStructure = pvDataCreate->createPVStructure(top);
@@ -99,7 +104,8 @@ void Record::initAlarmLimit()
 {
 	PVStructurePtr pvStructure = getPVStructure();
 	pvStructure = pvStructure->getSubField<PVStructure>("alarmLimit");
-		
+
+	// Initialize the values of every field in the alarm limit structure.
 	pvStructure->getSubField<PVBoolean>("active")->put(true);
 	pvStructure->getSubField<PVDouble>("lowAlarmLimit")->put(10);
 	pvStructure->getSubField<PVDouble>("lowWarningLimit")->put(20);
