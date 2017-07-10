@@ -41,7 +41,7 @@ string genString()
 	return str;
 }
 
-// Not really fifty fifty odds. Thus fittyfitty.
+// Not really fifty fifty odds. Thus, fittyfitty.
 bool fittyfitty()
 {
 	return rand() % 2;
@@ -49,6 +49,7 @@ bool fittyfitty()
 
 int test(const string & channelName,
 		 const bool & debug,
+		 const bool & verbosity,
 		 const int & iterations,
 		 const double & interval)
 {
@@ -73,8 +74,8 @@ int test(const string & channelName,
 
 		for (size_t i = 0; i < (unsigned) iterations; ++i) {
 			
-			struct timespec req; // Requested time to sleep.
-			struct timespec rem; // Remaining time to sleep.
+			struct timespec req; 	// Requested time to sleep.
+			struct timespec rem; 	// Remaining time to sleep.
 
 			pvStr->getSubField<PVLong>("longInteger1")->put(genLong());
 			pvStr->getSubField<PVLong>("longInteger2")->put(genLong());
@@ -90,9 +91,12 @@ int test(const string & channelName,
 			put->put();
 		
 			// Cast to truncate the decimal value off. 
-			req.tv_sec = (int) interval;
+
+			req.tv_sec = (int) interval;							// tv_sec : seconds to sleep
+			
 			// Convert the decimal value to nanoseconds.
-			req.tv_nsec = (interval - (int) interval) * 1000000000;
+			
+			req.tv_nsec = (interval - (int) interval) * 1000000000;	// tv_nsec: nanoseconds to sleep
 			
 			nanosleep(&req, &rem);
 		}

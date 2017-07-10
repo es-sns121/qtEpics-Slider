@@ -17,6 +17,7 @@
  * */
 int test(const std::string & channelName,
 		 const bool & debug,
+		 const bool & verbosity,
 		 const int & iterations,
 		 const double & interval);
 
