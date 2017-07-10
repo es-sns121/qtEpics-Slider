@@ -10,11 +10,11 @@ include $(config)
 exe = $(bin)/testClient
 
 # Source files
-src = main.cpp
+src = main.cpp test.cpp
 
 all: testClient
 
-testClient : $(src)
+testClient : test.h $(src)
 	@mkdir -p $(top)/bin
 	g++ $(CPP_FLAGS) $(EPICS_INCLUDE) $(EPICS_LIBRARY) $(src) -o $(exe)
 

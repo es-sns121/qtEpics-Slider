@@ -3,6 +3,8 @@
 
 // main source file for test client application. 
 
+#include "test.h"
+
 #include <pv/pvaClient.h>
 
 #include <cctype>
@@ -17,12 +19,8 @@ bool isInt(const string & arg)
 {
 	size_t size = arg.length();
 	for (size_t i = 0; i < size; ++i)
-	{	
-		if (!isdigit(arg[i])) {
+		if (!isdigit(arg[i]))
 			return false;
-		}
-	}
-	
 	return true;
 }
 
@@ -31,18 +29,16 @@ bool isFloat(const string & arg)
 	bool decimalFound = false;
 	size_t size = arg.length();
 	
-	for (size_t i = 0; i < size; ++i)
-	{	
-		if (!isdigit(arg[i]) && arg[i] != '.') {
+	for (size_t i = 0; i < size; ++i) {
+		if (!isdigit(arg[i]) && arg[i] != '.')
 			return false;
-		}
-		if (arg[i] == '.' && decimalFound == false) {
-			decimalFound = true;
-		} else if (arg[i] == '.' && decimalFound == true) {
+		
+		if (arg[i] == '.' && decimalFound == false)
+			decimalFound = true;	
+		else if (arg[i] == '.' && decimalFound == true)
 			return false;
-		}
 	}
-
+	
 	return true;
 }
 
@@ -55,6 +51,8 @@ void help()
 		 << "\t-v (verbose. prints extra ouput)\n"
 		 << "\t-d (debug. prints debug information)\n"
 		 << "\t-h (help. prints help information)\n";
+	
+	exit(0);
 }
 
 int main (int argc, char ** argv) 
@@ -91,8 +89,6 @@ int main (int argc, char ** argv)
 			
 			help();
 			
-			return 0;	
-		
 		} else if (arg == "-d") {
 		// Debug flag
 			
@@ -103,36 +99,15 @@ int main (int argc, char ** argv)
 			
 			cout << "Unrecognized option: '" << arg << "'."
 				 << " ('testClient -h' for help.)\n"; 
+			
 			return 0;
-		
 		}
 	}
 
 	cout << "testClient\n";
-	cout << "iterations: " << iterations << endl;
-	cout << "interval: " << interval << endl;
+	cout << "debug : " << (debug ? "true" : "false") << endl;
+	cout << "number of iterations: " << iterations << endl;
+	cout << "interval between iterations: " << interval << " seconds" << endl;
 
-	try {
-		PvaClientPtr pva = PvaClient::get();
-		
-		cout << "debug : " << (debug ? "true" : "false") << endl;
-		
-		if (debug) PvaClient::setDebug(true);
-		
-		PvaClientChannelPtr channel = pva->channel(channelName);
-
-		PvaClientPutPtr put = channel->createPut("");
-
-		PvaClientPutDataPtr putData = put->getData();
-
-		putData->getPVStructure()->dumpValue(cout);
-		
-	} catch (std::runtime_error e) {	
-		
-		cerr << "exception: " << e.what() << endl;
-		return -1;
-	
-	}
-	
-	return 0;
+	return test(channelName, debug, iterations, interval);
 }
