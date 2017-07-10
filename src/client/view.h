@@ -96,11 +96,15 @@ class SliderTab : public QWidget
 		void initProgressBar(const int & rangeLow,
 							const int & rangeHigh,
 							const int & value);
+		
 		void initCheckbox();
+		
 		void initSlider(const int & rangeLow,
 							const int & rangeHigh,
 							const int & value);
-		void initLimits();
+		
+		void initLimits(const int & rangeLow,
+							const int & rangeHigh);
 		
 		// Connects necessary signals and slots of widgets
 		void connectWidgets();
@@ -115,12 +119,14 @@ class SliderTab : public QWidget
 		void setUnits();
 
 		QProgressBar * progress_bar;	// Progress bar to show current value in its range
+		QLabel * lowLimit;				// Low limit of the value's range
+		QLabel * highLimit;				// High limit of the value's range
 		QCheckBox * checkBox;			// Check box to enable/disable slider value tracking
 		QSlider * slider;				// Slider to control current value in its range
 		
 		Limits * limits;				// Widget to display data from alarm limit structure
 		
-		QLabel * value;					// Display record's scalar value
+		QLabel * value;					// Display record's slider value
 		QLabel * units;					// Display record's units string
 		QLabel * description;			// Display record's description string
 		
@@ -137,6 +143,7 @@ class StructTab : public QWidget {
 		void updateData();
 
 	private:
+		
 		// Retrieve the textual representation of the record from the model.
 		QString getModelText();
 
@@ -170,6 +177,7 @@ class Window : public QWidget
 		void updateViewValue(const int & value);	
 
 	private:
+		
 		void callback(const int & value);
 		
 		Model * model;

@@ -123,10 +123,10 @@ DataTab::DataTab(QWidget * parent, Model * model)
 
 void DataTab::initLabels()
 {
-	_long    = new QLabel("long: ", this);
-	_double  = new QLabel("double: ", this);
-	_string  = new QLabel("string: ", this);
-	_boolean = new QLabel("boolean: ", this);
+	_long    = new QLabel(this);
+	_double  = new QLabel(this);
+	_string  = new QLabel(this);
+	_boolean = new QLabel(this);
 }
 
 void DataTab::formatDataTab()
@@ -283,7 +283,7 @@ SliderTab::SliderTab(QWidget * parent, Model * _model)
 	
 	initCheckbox();
 
-	initLimits();
+	initLimits(rangeLow, rangeHigh);
 
 	connectWidgets();
 	
@@ -327,12 +327,34 @@ void SliderTab::initSlider(
 	slider->setTracking(false);		// To prevent spamming the updateModelValue() call, we disable slider 
 									// tracking by default. This means that only the final position of the 
 									// slider will emit a 'value changed' signal.
+
 }
 
-void SliderTab::initLimits()
+void SliderTab::initLimits(
+	const int & rangeLow,
+	const int & rangeHigh)
 {
-	limits = new Limits(this);
+	lowLimit = new QLabel(this);
+	highLimit = new QLabel(this);
 
+	// Initialize the low limit label
+	
+	string str = "low limit: ";
+	str += string(longToString((long) rangeLow));
+	lowLimit->setText(QString(str.c_str()));
+
+	str.clear();
+
+	// Initialize the high limit label
+	
+	str = "high limit: ";
+	str += string(longToString((long) rangeHigh));
+	highLimit->setText(QString(str.c_str()));
+
+	// Initialize the limits object that holds other limit data.
+
+	limits = new Limits(this);
+	
 	limits->setUnits(model->getUnits());
 	limits->setLowAlarm(model->getLowAlarm());
 	limits->setLowWarning(model->getLowWarning());
@@ -361,10 +383,17 @@ void SliderTab::formatSliderTab()
 	setMinimumSize(450, 200);
 	
 	QBoxLayout * mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+	QBoxLayout * subLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+
+	subLayout->addWidget(lowLimit);
+	subLayout->setAlignment(lowLimit, Qt::AlignLeft);
+	subLayout->addWidget(highLimit);
+	subLayout->setAlignment(highLimit, Qt::AlignRight);
 	
 	mainLayout->addWidget(progress_bar);
 	mainLayout->addWidget(checkBox);
 	mainLayout->addWidget(slider);
+	mainLayout->addLayout(subLayout);
 	mainLayout->addWidget(limits);
 	mainLayout->addWidget(value);
 	mainLayout->addWidget(units);

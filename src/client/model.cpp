@@ -17,6 +17,7 @@ Model::Model (void * _view, const string & channelName)
 	initPva(channelName);
 	initValue();
 	initText();
+	initData();
 	initDisplay();
 	initAlarmLimit();
 	initThread();
