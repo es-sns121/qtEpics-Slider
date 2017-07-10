@@ -34,6 +34,10 @@ RecordPtr Record::createRecord(const string & recordName)
 		add("value", pvInt)->
 		add("display", standardField->display())->
 		add("alarmLimit", createAlarmLimitField())->
+		add("longInteger", pvLong)->
+		add("double", pvDouble)->
+		add("string", pvString)->
+		add("boolean", pvBoolean)->
 		createStructure();
 
 	PVStructurePtr pvStructure = pvDataCreate->createPVStructure(top);

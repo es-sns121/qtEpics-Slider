@@ -25,4 +25,4 @@ server : $(DEP)
 clean:
 	@printf "Cleaning server binary...\n"
 	@mkdir -p $(TOP)/bin
-	rm -f $(BIN)/$(EXE)
+	rm -f $(BIN)/server
