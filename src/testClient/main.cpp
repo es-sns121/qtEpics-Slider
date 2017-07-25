@@ -48,7 +48,6 @@ void help()
 		 << "\tusage: ./testClient [number of iterations] [seconds between iterations] [-flag]\n"
 		 << "\tusage:               default = 10           default = 1.0\n"
 		 << "-- executable flags -- only one accepted at a time -- \n"
-		 << "\t-v (verbose. prints extra ouput)\n"
 		 << "\t-d (debug. prints debug information)\n"
 		 << "\t-h (help. prints help information)\n";
 	
@@ -61,7 +60,6 @@ int main (int argc, char ** argv)
 
 	int iterations = 10;
 	double interval = 1.0;
-	bool verbosity(false);
 	bool debug(false);
 	
 	// Handle argument or executable flag.
@@ -78,12 +76,7 @@ int main (int argc, char ** argv)
 			
 			interval = atof(argv[i]);
 			continue;
-		} 
-		
-		if (arg == "-v") {
-		
-			verbosity = true;		
-	
+
 		} else if (arg == "-h") {
 		// Help flag
 			
